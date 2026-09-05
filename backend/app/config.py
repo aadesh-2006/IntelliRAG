@@ -30,6 +30,15 @@ class Settings(BaseSettings):
     EMBEDDING_MODEL_NAME: str = "sentence-transformers/all-mpnet-base-v2"
     EMBEDDING_BATCH_SIZE: int = 32
 
+    LLM_PROVIDER: str = "mock"
+    LLM_MODEL: str = "gemini-1.5-flash"
+    LLM_API_KEY: str = ""
+    LLM_TEMPERATURE: float = 0.2
+    LLM_MAX_OUTPUT_TOKENS: int = 1024
+    RAG_MAX_CONTEXT_CHARS: int = 12000
+    RAG_DEFAULT_TOP_K: int = 5
+    RAG_DEFAULT_SIMILARITY_THRESHOLD: float = 0.25
+
     @field_validator("CORS_ORIGINS", "ALLOWED_EXTENSIONS", mode="before")
     def assemble_list_fields(cls, v: Union[str, List[str]]) -> List[str]:
         if isinstance(v, str):

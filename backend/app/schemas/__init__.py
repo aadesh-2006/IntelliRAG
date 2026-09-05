@@ -14,6 +14,7 @@ from app.schemas.processing import (
 )
 from app.schemas.chunk import ChunkResponse, ChunkListResponse, EmbedTriggerResponse
 from app.schemas.retrieval import SearchQueryRequest, RetrievedChunk, SearchQueryResponse
+from app.schemas.rag import Citation, RAGQueryRequest, RAGQueryResponse
 
 __all__ = [
     "HealthResponse",
@@ -38,4 +39,7 @@ __all__ = [
     "SearchQueryRequest",
     "RetrievedChunk",
     "SearchQueryResponse",
+    "Citation",
+    "RAGQueryRequest",
+    "RAGQueryResponse",
 ]

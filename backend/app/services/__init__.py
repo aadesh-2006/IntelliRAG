@@ -13,6 +13,9 @@ from app.services.chunking_service import ChunkingService, chunking_service
 from app.services.embedding_service import BaseEmbeddingService, LocalEmbeddingService, embedding_service
 from app.services.document_chunk_service import generate_and_store_chunks, list_document_chunks
 from app.services.retrieval_service import RetrievalService, retrieval_service
+from app.services.prompt_service import PromptService, prompt_service
+from app.services.llm_service import BaseLLMService, MockLLMService, GeminiLLMService, llm_service
+from app.services.rag_service import RAGService, rag_service
 
 __all__ = [
     "get_user_by_email",
@@ -38,4 +41,12 @@ __all__ = [
     "list_document_chunks",
     "RetrievalService",
     "retrieval_service",
+    "PromptService",
+    "prompt_service",
+    "BaseLLMService",
+    "MockLLMService",
+    "GeminiLLMService",
+    "llm_service",
+    "RAGService",
+    "rag_service",
 ]
