@@ -21,9 +21,16 @@ export async function registerUser(email: string, password: string): Promise<Use
 }
 
 export async function loginUser(email: string, password: string): Promise<TokenResponse> {
+  const formData = new URLSearchParams()
+  formData.append('username', email)
+  formData.append('password', password)
+
   const tokenData = await fetchApi<TokenResponse>('/api/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: formData.toString(),
   })
   authStorage.setToken(tokenData.access_token)
   return tokenData

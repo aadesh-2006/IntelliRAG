@@ -105,13 +105,13 @@ def test_plaintext_password_never_stored():
     assert verify_password("MyPlainPassword123", fetched_user.password_hash) is True
     db.close()
 
-def test_user_login_success():
+def test_user_login_oauth2_form_success():
     client.post("/api/auth/register", json={
         "email": "member@intellirag.ai",
         "password": "CorrectPassword123"
     })
-    login_res = client.post("/api/auth/login", json={
-        "email": "member@intellirag.ai",
+    login_res = client.post("/api/auth/login", data={
+        "username": "member@intellirag.ai",
         "password": "CorrectPassword123"
     })
     assert login_res.status_code == 200
@@ -124,16 +124,16 @@ def test_user_login_invalid_password():
         "email": "member2@intellirag.ai",
         "password": "CorrectPassword123"
     })
-    login_res = client.post("/api/auth/login", json={
-        "email": "member2@intellirag.ai",
+    login_res = client.post("/api/auth/login", data={
+        "username": "member2@intellirag.ai",
         "password": "WrongPassword456"
     })
     assert login_res.status_code == 401
     assert "Incorrect email or password" in login_res.json()["detail"]
 
 def test_user_login_nonexistent_email():
-    login_res = client.post("/api/auth/login", json={
-        "email": "unknown@intellirag.ai",
+    login_res = client.post("/api/auth/login", data={
+        "username": "unknown@intellirag.ai",
         "password": "CorrectPassword123"
     })
     assert login_res.status_code == 401
@@ -146,8 +146,8 @@ def test_get_me_with_valid_jwt():
     })
     user_id = reg_res.json()["id"]
 
-    login_res = client.post("/api/auth/login", json={
-        "email": "profile@intellirag.ai",
+    login_res = client.post("/api/auth/login", data={
+        "username": "profile@intellirag.ai",
         "password": "SecurePassword123"
     })
     token = login_res.json()["access_token"]
