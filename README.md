@@ -19,8 +19,8 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 
 - [x] **Module 1 — Project Foundation:** Full-stack scaffold with FastAPI backend, React + TypeScript + Vite frontend, Tailwind CSS, decoupled API client layer, and health monitoring endpoints.
 - [x] **Module 2 — Database & Persistence:** PostgreSQL integration with SQLAlchemy 2.x, Alembic migrations, pgvector extension, foundational relational models (`User`, `Document`, `DocumentChunk`), and database health diagnostics.
-- [ ] **Module 3 — Authentication:** User identity, authentication workflows, JWT tokens, session security, and role-based access. *(Planned)*
-- [ ] **Module 4 — File & Document Management:** Secure file upload pipelines, metadata storage, object storage abstraction, and document lifecycle management. *(Planned)*
+- [x] **Module 3 — Authentication & User Security:** User registration (`POST /api/auth/register`), login (`POST /api/auth/login`), bcrypt password hashing, JWT access token authentication, protected identity endpoint (`GET /api/auth/me`), and React authentication context with protected session UI.
+- [ ] **Module 4 — File & Document Management:** Secure file upload pipelines, metadata storage, object storage abstraction, and scoped document ownership. *(Planned)*
 - [ ] **Module 5 — Multimodal Document AI:** PDF/image ingestion, layout parsing, OCR processing, and structured text/table extraction. *(Planned)*
 - [ ] **Module 6 — RAG Engine:** Chunking strategies, vector embeddings with pgvector, dense-sparse hybrid indexing, and semantic search. *(Planned)*
 - [ ] **Module 7 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
@@ -38,15 +38,15 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 
 ## Tech Stack
 
-### Implemented (Modules 1 & 2)
+### Implemented (Modules 1, 2 & 3)
 - **Backend:** Python 3.13+, FastAPI, Uvicorn, Pydantic v2, Pydantic Settings, HTTPX, Pytest
+- **Authentication & Security:** PyJWT, bcrypt, OAuth2 Bearer token flow
 - **Database & Vectors:** PostgreSQL, SQLAlchemy 2.x, Alembic, psycopg 3 (binary), pgvector
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React
 - **DevOps:** Docker, Docker Compose (pgvector/pgvector:pg17)
 
 ### Planned (Future Modules)
 - **AI & Multimodal Orchestration:** Google Gemini API, LangChain
-- **Authentication & Security:** JWT tokens, password hashing, OAuth2
 - **Document Processing:** PDF layout parsers, OCR engines, vision models
 
 ---
@@ -58,16 +58,22 @@ IntelliRAG/
 ├── backend/
 │   ├── alembic/
 │   │   ├── versions/
-│   │   │   └── 001_initial_schema.py
+│   │   │   ├── 001_initial_schema.py
+│   │   │   └── 002_add_user_password_hash.py
 │   │   ├── env.py
 │   │   └── script.py.mako
 │   ├── app/
 │   │   ├── api/
 │   │   │   ├── endpoints/
 │   │   │   │   ├── __init__.py
+│   │   │   │   ├── auth.py
 │   │   │   │   └── health.py
 │   │   │   ├── __init__.py
+│   │   │   ├── deps.py
 │   │   │   └── router.py
+│   │   ├── core/
+│   │   │   ├── __init__.py
+│   │   │   └── security.py
 │   │   ├── db/
 │   │   │   ├── __init__.py
 │   │   │   ├── base.py
@@ -79,12 +85,17 @@ IntelliRAG/
 │   │   │   └── user.py
 │   │   ├── schemas/
 │   │   │   ├── __init__.py
+│   │   │   ├── auth.py
 │   │   │   └── health.py
+│   │   ├── services/
+│   │   │   ├── __init__.py
+│   │   │   └── auth_service.py
 │   │   ├── __init__.py
 │   │   ├── config.py
 │   │   └── main.py
 │   ├── tests/
 │   │   ├── __init__.py
+│   │   ├── test_auth.py
 │   │   ├── test_database.py
 │   │   └── test_health.py
 │   ├── .env.example
@@ -96,14 +107,19 @@ IntelliRAG/
 │   │   └── favicon.svg
 │   ├── src/
 │   │   ├── api/
+│   │   │   ├── auth.ts
+│   │   │   ├── authStorage.ts
 │   │   │   ├── client.ts
 │   │   │   └── health.ts
 │   │   ├── components/
 │   │   │   ├── ArchitectureOverview.tsx
+│   │   │   ├── AuthModal.tsx
 │   │   │   ├── Footer.tsx
 │   │   │   ├── Header.tsx
 │   │   │   ├── HeroSection.tsx
 │   │   │   └── StatusBadge.tsx
+│   │   ├── context/
+│   │   │   └── AuthContext.tsx
 │   │   ├── App.tsx
 │   │   ├── index.css
 │   │   ├── main.tsx
@@ -140,8 +156,6 @@ To start PostgreSQL with the `pgvector` extension enabled:
 ```bash
 docker-compose up -d db
 ```
-
-This launches a PostgreSQL container on port `5432` with data persisted in a named volume (`postgres_data`).
 
 ---
 
@@ -221,42 +235,17 @@ This launches a PostgreSQL container on port `5432` with data persisted in a nam
 
 ---
 
-### Running All Services with Docker Compose
+## Authentication & API Endpoints
 
-```bash
-docker-compose up --build
-```
+### Health Check
+- **`GET /api/health`**: Returns system and PostgreSQL connection status.
 
-- **Frontend Application:** `http://localhost:3000`
-- **Backend API:** `http://localhost:8000`
-- **Interactive Swagger Docs:** `http://localhost:8000/api/docs`
-- **ReDoc Documentation:** `http://localhost:8000/api/redoc`
+### Authentication Endpoints
+- **`POST /api/auth/register`**: Register a new user account (email + password).
+- **`POST /api/auth/login`**: Authenticate credentials and receive a JWT Bearer token.
+- **`GET /api/auth/me`**: Retrieve the authenticated user's profile (`Authorization: Bearer <token>` required).
 
----
-
-## Health Check & API Endpoints
-
-### `GET /api/health`
-Verifies backend service availability and PostgreSQL connection state.
-
-#### Sample Response (Database Connected):
-```json
-{
-  "status": "healthy",
-  "service": "IntelliRAG API",
-  "version": "0.1.0",
-  "environment": "development",
-  "database": "connected"
-}
-```
-
-#### Sample Response (Database Unavailable):
-```json
-{
-  "status": "degraded",
-  "service": "IntelliRAG API",
-  "version": "0.1.0",
-  "environment": "development",
-  "database": "unavailable"
-}
-```
+### Interactive API Documentation
+- **Swagger UI:** `http://localhost:8000/api/docs`
+- **ReDoc:** `http://localhost:8000/api/redoc`
+- **OpenAPI JSON:** `http://localhost:8000/api/openapi.json`

@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     VECTOR_DIMENSION: int = 768
     DB_POOL_SIZE: int = 5
     DB_MAX_OVERFLOW: int = 10
+    JWT_SECRET_KEY: str = "changethis-insecure-development-jwt-secret-key-32charsmin"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
 
     @field_validator("CORS_ORIGINS", mode="before")
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:

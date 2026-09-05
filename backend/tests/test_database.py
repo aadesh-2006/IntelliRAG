@@ -26,9 +26,11 @@ def test_models_metadata_registration():
 
 def test_user_model_instantiation():
     user = User(
-        email="test@intellirag.ai"
+        email="test@intellirag.ai",
+        password_hash="hashed_secret_string"
     )
     assert user.email == "test@intellirag.ai"
+    assert user.password_hash == "hashed_secret_string"
     assert hasattr(user, "documents")
 
 def test_document_model_instantiation():
@@ -81,6 +83,6 @@ def test_alembic_configuration():
     alembic_cfg.set_main_option("script_location", os.path.join(base_dir, "alembic"))
     script = ScriptDirectory.from_config(alembic_cfg)
     revisions = list(script.walk_revisions())
-    assert len(revisions) >= 1
+    assert len(revisions) >= 2
     head_rev = revisions[0]
-    assert head_rev.revision == "001_initial_schema"
+    assert head_rev.revision == "002_add_user_password_hash"

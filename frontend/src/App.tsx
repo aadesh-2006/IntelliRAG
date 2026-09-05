@@ -4,9 +4,10 @@ import { HeroSection } from './components/HeroSection'
 import { StatusBadge } from './components/StatusBadge'
 import { ArchitectureOverview } from './components/ArchitectureOverview'
 import { Footer } from './components/Footer'
+import { AuthProvider } from './context/AuthContext'
 import { checkBackendHealth, HealthStatus } from './api/health'
 
-export const App: React.FC = () => {
+export const AppContent: React.FC = () => {
   const [status, setStatus] = useState<HealthStatus | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -50,6 +51,14 @@ export const App: React.FC = () => {
       </main>
       <Footer />
     </div>
+  )
+}
+
+export const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   )
 }
 
