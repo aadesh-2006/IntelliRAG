@@ -21,7 +21,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - [x] **Module 2 — Database & Persistence:** PostgreSQL integration with SQLAlchemy 2.x, Alembic migrations, pgvector extension, foundational relational models (`User`, `Document`, `DocumentChunk`), and database health diagnostics.
 - [x] **Module 3 — Authentication & User Security:** User registration (`POST /api/auth/register`), login (`POST /api/auth/login`), bcrypt password hashing, JWT access token authentication, protected identity endpoint (`GET /api/auth/me`), and React authentication context with protected session UI.
 - [x] **Module 4 — File & Document Management:** Secure streaming file upload pipeline, metadata tracking in PostgreSQL, isolated local/object storage abstraction, user-scoped document access controls, document download and deletion endpoints, and authenticated frontend upload/vault management.
-- [ ] **Module 5 — Multimodal Document AI:** PDF/image ingestion, layout parsing, OCR processing, and structured text/table extraction. *(Planned)*
+- [x] **Module 5 — Multimodal Document AI:** Safe PDF parsing with pdfplumber/pypdf, layout analysis (headings, paragraphs, bounding boxes), structured tabular extraction (rows, cells, headers), image OCR extraction (pytesseract/PIL), docx/structured text routing, document lifecycle processing states (`UPLOADED` -> `PROCESSING` -> `PROCESSED` / `FAILED`), and interactive document extraction inspection UI.
 - [ ] **Module 6 — RAG Engine:** Chunking strategies, vector embeddings with pgvector, dense-sparse hybrid indexing, and semantic search. *(Planned)*
 - [ ] **Module 7 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
 - [ ] **Module 8 — AI Analytics:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
@@ -38,17 +38,18 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 
 ## Tech Stack
 
-### Implemented (Modules 1, 2, 3 & 4)
+### Implemented (Modules 1, 2, 3, 4 & 5)
 - **Backend:** Python 3.13+, FastAPI, Uvicorn, Pydantic v2, Pydantic Settings, HTTPX, Pytest
 - **Authentication & Security:** PyJWT, bcrypt, OAuth2 Password Bearer flow
 - **Storage & File Management:** Chunked streaming file storage, UUID-isolated paths, extension & size validation
+- **Document AI & Extraction:** pdfplumber, pypdf, Pillow, pytesseract, python-docx, csv/json structured parser
 - **Database & Vectors:** PostgreSQL, SQLAlchemy 2.x, Alembic, psycopg 3 (binary), pgvector
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React
 - **DevOps:** Docker, Docker Compose (pgvector/pgvector:pg17)
 
 ### Planned (Future Modules)
 - **AI & Multimodal Orchestration:** Google Gemini API, LangChain
-- **Document Processing:** PDF layout parsers, OCR engines, vision models
+- **Embeddings & Vector Search:** Vector embeddings, hybrid dense/sparse search, RAG retrieval
 
 ---
 
@@ -60,7 +61,8 @@ IntelliRAG/
 │   ├── alembic/
 │   │   ├── versions/
 │   │   │   ├── 001_initial_schema.py
-│   │   │   └── 002_add_user_password_hash.py
+│   │   │   ├── 002_add_user_password_hash.py
+│   │   │   └── 003_add_document_processing_fields.py
 │   │   ├── env.py
 │   │   └── script.py.mako
 │   ├── app/
@@ -89,8 +91,18 @@ IntelliRAG/
 │   │   │   ├── __init__.py
 │   │   │   ├── auth.py
 │   │   │   ├── document.py
-│   │   │   └── health.py
+│   │   │   ├── health.py
+│   │   │   └── processing.py
 │   │   ├── services/
+│   │   │   ├── document_processing/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── base.py
+│   │   │   │   ├── docx_processor.py
+│   │   │   │   ├── image_processor.py
+│   │   │   │   ├── ocr_utils.py
+│   │   │   │   ├── pdf_processor.py
+│   │   │   │   ├── pipeline.py
+│   │   │   │   └── text_processor.py
 │   │   │   ├── __init__.py
 │   │   │   ├── auth_service.py
 │   │   │   ├── document_service.py
@@ -104,7 +116,8 @@ IntelliRAG/
 │   │   ├── test_auth.py
 │   │   ├── test_database.py
 │   │   ├── test_documents.py
-│   │   └── test_health.py
+│   │   ├── test_health.py
+│   │   └── test_processing.py
 │   ├── .env.example
 │   ├── alembic.ini
 │   ├── Dockerfile
@@ -123,6 +136,7 @@ IntelliRAG/
 │   │   │   ├── ArchitectureOverview.tsx
 │   │   │   ├── AuthCard.tsx
 │   │   │   ├── AuthModal.tsx
+│   │   │   ├── DocumentInspectionModal.tsx
 │   │   │   ├── DocumentList.tsx
 │   │   │   ├── DocumentUploadCard.tsx
 │   │   │   ├── Footer.tsx
@@ -256,10 +270,12 @@ docker-compose up -d db
 - **`POST /api/auth/login`**: Authenticate credentials and receive a JWT Bearer token.
 - **`GET /api/auth/me`**: Retrieve the authenticated user's profile (`Authorization: Bearer <token>` required).
 
-### Document Management Endpoints
+### Document Management & Processing Endpoints
 - **`POST /api/documents/upload`**: Upload a file (PDF, DOCX, TXT, CSV, JSON, images, Markdown) with classification type (`Authorization: Bearer <token>` required).
 - **`GET /api/documents`**: List authenticated user's uploaded documents with optional filtering and pagination (`Authorization: Bearer <token>` required).
 - **`GET /api/documents/{document_id}`**: Retrieve document metadata (`Authorization: Bearer <token>` required).
+- **`POST /api/documents/{document_id}/process`**: Trigger Multimodal Document AI processing pipeline (`Authorization: Bearer <token>` required).
+- **`GET /api/documents/{document_id}/content`**: Retrieve extracted document text, layout blocks, detected tables, and metadata (`Authorization: Bearer <token>` required).
 - **`GET /api/documents/{document_id}/download`**: Download document binary stream (`Authorization: Bearer <token>` required).
 - **`DELETE /api/documents/{document_id}`**: Delete document record and storage file (`Authorization: Bearer <token>` required).
 

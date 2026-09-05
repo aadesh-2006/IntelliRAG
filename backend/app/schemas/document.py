@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 class DocumentResponse(BaseModel):
@@ -12,6 +12,8 @@ class DocumentResponse(BaseModel):
     file_size: int
     status: str
     document_type: str
+    processed_at: Optional[datetime] = None
+    processing_error: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 

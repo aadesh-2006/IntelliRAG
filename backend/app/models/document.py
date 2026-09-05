@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
-from typing import List, TYPE_CHECKING
-from sqlalchemy import String, Integer, DateTime, ForeignKey, func
+from typing import List, Optional, Any, Dict, TYPE_CHECKING
+from sqlalchemy import String, Integer, DateTime, ForeignKey, Text, JSON, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
@@ -55,6 +55,22 @@ class Document(Base):
         default="GENERAL_DOCUMENT",
         nullable=False,
         index=True
+    )
+    processed_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+    processing_error: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True
+    )
+    extracted_text: Mapped[Optional[str]] = mapped_column(
+        Text,
+        nullable=True
+    )
+    extracted_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(
+        JSON,
+        nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

@@ -1,4 +1,6 @@
 import uuid
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import select, desc
@@ -6,6 +8,7 @@ from fastapi import UploadFile, HTTPException, status
 from app.models.document import Document
 from app.models.user import User
 from app.services.storage_service import storage_service
+from app.services.document_processing.pipeline import document_pipeline
 from app.config import settings
 
 def validate_file_extension(filename: str) -> None:
@@ -77,3 +80,46 @@ def delete_document(
     db.delete(document)
     db.commit()
     return True
+
+def process_document_by_id(
+    db: Session,
+    document_id: uuid.UUID,
+    user_id: uuid.UUID
+) -> Document:
+    document = get_document_by_id(db, document_id, user_id)
+    if not document:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found"
+        )
+
+    document.status = "PROCESSING"
+    document.processing_error = None
+    db.commit()
+    db.refresh(document)
+
+    try:
+        file_path = Path(document.file_path)
+        extracted = document_pipeline.process_document(
+            file_path=file_path,
+            document_id=str(document.id),
+            document_type=document.document_type
+        )
+        document.status = "PROCESSED"
+        document.processed_at = datetime.now(timezone.utc)
+        document.processing_error = None
+        document.extracted_text = extracted.full_text
+        document.extracted_metadata = extracted.model_dump(mode="json")
+        db.commit()
+        db.refresh(document)
+        return document
+    except Exception as exc:
+        document.status = "FAILED"
+        document.processed_at = datetime.now(timezone.utc)
+        document.processing_error = str(exc)
+        db.commit()
+        db.refresh(document)
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Document processing failed: {str(exc)}"
+        )

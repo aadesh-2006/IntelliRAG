@@ -6,7 +6,9 @@ from app.services.document_service import (
     get_document_by_id,
     delete_document,
     validate_file_extension,
+    process_document_by_id,
 )
+from app.services.document_processing.pipeline import DocumentProcessingPipeline, document_pipeline
 
 __all__ = [
     "get_user_by_email",
@@ -20,4 +22,7 @@ __all__ = [
     "get_document_by_id",
     "delete_document",
     "validate_file_extension",
+    "process_document_by_id",
+    "DocumentProcessingPipeline",
+    "document_pipeline",
 ]
