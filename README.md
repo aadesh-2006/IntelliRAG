@@ -15,28 +15,39 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 
 ---
 
-## Module 1 Scope (Current Status)
+## Module Status & Progress
 
-Module 1 establishes the clean full-stack architectural foundation for IntelliRAG:
-
-- [x] **Backend Foundation:** FastAPI service with modular routing, CORS handling, Pydantic settings management, and health monitoring endpoints.
-- [x] **Frontend Foundation:** React + TypeScript + Vite single-page application styled with Tailwind CSS, featuring an API service communication layer and real-time backend health check status monitoring.
-- [x] **Project Tooling & Config:** Production `.gitignore`, environment configuration templates (`.env.example`), container definitions (`Dockerfile` for backend & frontend, `docker-compose.yml`), and automated test suite.
-
-*Note: Database persistence (PostgreSQL/pgvector), authentication, document processing, and AI integrations belong to subsequent modules and are deliberately not included in Module 1.*
+- [x] **Module 1 — Project Foundation:** Full-stack scaffold with FastAPI backend, React + TypeScript + Vite frontend, Tailwind CSS, decoupled API client layer, and health monitoring endpoints.
+- [x] **Module 2 — Database & Persistence:** PostgreSQL integration with SQLAlchemy 2.x, Alembic migrations, pgvector extension, foundational relational models (`User`, `Document`, `DocumentChunk`), and database health diagnostics.
+- [ ] **Module 3 — Authentication:** User identity, authentication workflows, JWT tokens, session security, and role-based access. *(Planned)*
+- [ ] **Module 4 — File & Document Management:** Secure file upload pipelines, metadata storage, object storage abstraction, and document lifecycle management. *(Planned)*
+- [ ] **Module 5 — Multimodal Document AI:** PDF/image ingestion, layout parsing, OCR processing, and structured text/table extraction. *(Planned)*
+- [ ] **Module 6 — RAG Engine:** Chunking strategies, vector embeddings with pgvector, dense-sparse hybrid indexing, and semantic search. *(Planned)*
+- [ ] **Module 7 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
+- [ ] **Module 8 — AI Analytics:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
+- [ ] **Module 9 — Dashboard:** Interactive dashboard UI, ingestion statistics, document explorer, and status monitoring. *(Planned)*
+- [ ] **Module 10 — Chat Interface:** Conversational document assistant, citation tracking, and groundedness visualizer. *(Planned)*
+- [ ] **Module 11 — Reminder Engine:** Actionable date detection, scheduled alerts, warranty/expiry tracking, and automated reminders. *(Planned)*
+- [ ] **Module 12 — Notification System:** Multi-channel alerting (email, in-app, webhooks) for document events and query alerts. *(Planned)*
+- [ ] **Module 13 — Cricket Scorecard AI:** Specialized multimodal extraction engine for cricket scorecards, player statistics, and match summaries. *(Planned)*
+- [ ] **Module 14 — End-to-End Integration:** Unified orchestration connecting ingestion, storage, search, synthesis, and UI workflows. *(Planned)*
+- [ ] **Module 15 — Testing & AI Evaluation:** Automated evaluation suite, retrieval precision/recall benchmarks, and regression testing. *(Planned)*
+- [ ] **Module 16 — Deployment & Final Polish:** Production containerization, CI/CD pipelines, rate limiting, and observability telemetry. *(Planned)*
 
 ---
 
 ## Tech Stack
 
-### Implemented in Module 1
+### Implemented (Modules 1 & 2)
 - **Backend:** Python 3.13+, FastAPI, Uvicorn, Pydantic v2, Pydantic Settings, HTTPX, Pytest
+- **Database & Vectors:** PostgreSQL, SQLAlchemy 2.x, Alembic, psycopg 3 (binary), pgvector
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React
-- **DevOps:** Docker, Docker Compose
+- **DevOps:** Docker, Docker Compose (pgvector/pgvector:pg17)
 
-### Planned for Future Modules
-- **Database & Vectors (Module 2):** PostgreSQL, SQLAlchemy, Alembic, pgvector
-- **AI & Multimodal Orchestration (Module 3+):** Google Gemini API, LangChain, Document Parsers
+### Planned (Future Modules)
+- **AI & Multimodal Orchestration:** Google Gemini API, LangChain
+- **Authentication & Security:** JWT tokens, password hashing, OAuth2
+- **Document Processing:** PDF layout parsers, OCR engines, vision models
 
 ---
 
@@ -45,6 +56,11 @@ Module 1 establishes the clean full-stack architectural foundation for IntelliRA
 ```
 IntelliRAG/
 ├── backend/
+│   ├── alembic/
+│   │   ├── versions/
+│   │   │   └── 001_initial_schema.py
+│   │   ├── env.py
+│   │   └── script.py.mako
 │   ├── app/
 │   │   ├── api/
 │   │   │   ├── endpoints/
@@ -52,6 +68,15 @@ IntelliRAG/
 │   │   │   │   └── health.py
 │   │   │   ├── __init__.py
 │   │   │   └── router.py
+│   │   ├── db/
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py
+│   │   │   └── session.py
+│   │   ├── models/
+│   │   │   ├── __init__.py
+│   │   │   ├── document.py
+│   │   │   ├── document_chunk.py
+│   │   │   └── user.py
 │   │   ├── schemas/
 │   │   │   ├── __init__.py
 │   │   │   └── health.py
@@ -60,8 +85,10 @@ IntelliRAG/
 │   │   └── main.py
 │   ├── tests/
 │   │   ├── __init__.py
+│   │   ├── test_database.py
 │   │   └── test_health.py
 │   ├── .env.example
+│   ├── alembic.ini
 │   ├── Dockerfile
 │   └── requirements.txt
 ├── frontend/
@@ -102,7 +129,19 @@ IntelliRAG/
 ### Prerequisites
 - Python 3.11+ (or Python 3.13)
 - Node.js 18+ & npm 9+
-- Docker & Docker Compose (Optional)
+- PostgreSQL with pgvector (or Docker & Docker Compose)
+
+---
+
+### Database Setup with Docker Compose
+
+To start PostgreSQL with the `pgvector` extension enabled:
+
+```bash
+docker-compose up -d db
+```
+
+This launches a PostgreSQL container on port `5432` with data persisted in a named volume (`postgres_data`).
 
 ---
 
@@ -134,14 +173,19 @@ IntelliRAG/
    cp .env.example .env
    ```
 
-5. Run the FastAPI development server:
+5. Run database migrations:
    ```bash
-   uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+   alembic upgrade head
    ```
 
-6. Run backend automated tests:
+6. Run backend automated test suite:
    ```bash
    pytest tests/
+   ```
+
+7. Start the FastAPI development server:
+   ```bash
+   uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
    ```
 
 ---
@@ -168,72 +212,51 @@ IntelliRAG/
    npm run dev
    ```
 
-5. Open your browser at:
-   ```
-   http://localhost:5173
-   ```
+5. Open your browser at `http://localhost:5173`.
 
-6. Type check and build:
+6. Run type checks and build:
    ```bash
    npm run build
    ```
 
 ---
 
-### Running with Docker Compose
-
-To start both frontend and backend in isolated containers:
+### Running All Services with Docker Compose
 
 ```bash
 docker-compose up --build
 ```
 
-- **Frontend:** `http://localhost:3000`
+- **Frontend Application:** `http://localhost:3000`
 - **Backend API:** `http://localhost:8000`
-- **API Documentation:** `http://localhost:8000/api/docs`
+- **Interactive Swagger Docs:** `http://localhost:8000/api/docs`
+- **ReDoc Documentation:** `http://localhost:8000/api/redoc`
 
 ---
 
 ## Health Check & API Endpoints
 
 ### `GET /api/health`
-Verifies backend service availability and environment status.
+Verifies backend service availability and PostgreSQL connection state.
 
-#### Sample Response:
+#### Sample Response (Database Connected):
 ```json
 {
   "status": "healthy",
   "service": "IntelliRAG API",
   "version": "0.1.0",
-  "environment": "development"
+  "environment": "development",
+  "database": "connected"
 }
 ```
 
-### Interactive API Documentation
-- **Swagger UI:** `http://localhost:8000/api/docs`
-- **ReDoc:** `http://localhost:8000/api/redoc`
-- **OpenAPI JSON:** `http://localhost:8000/api/openapi.json`
-
----
-
-## Future Module Roadmap
-
-- **Module 2 — Persistence & Data Modeling:**
-  - PostgreSQL integration with SQLAlchemy ORM & Alembic migrations.
-  - pgvector configuration for vector embedding storage.
-  - Core database entities (documents, document chunks, metadata, conversation sessions).
-
-- **Module 3 — Multimodal Document Ingestion Pipeline:**
-  - PDF, image, and structured data parsers.
-  - Chunking strategies tailored for text, tabular data, and visual figures.
-  - Embedding generation pipeline.
-
-- **Module 4 — Hybrid Retrieval & RAG Orchestration:**
-  - Dense + sparse hybrid vector search with reciprocal rank fusion (RRF).
-  - Gemini API integration with structured prompt orchestration via LangChain.
-  - Source citation, confidence scoring, and groundedness validation.
-
-- **Module 5 — Full Product Interface & User Workflows:**
-  - Interactive document intelligence workbench.
-  - Document upload, viewer with bounding box citations, and conversational query interface.
-  - Evaluation dashboards and monitoring.
+#### Sample Response (Database Unavailable):
+```json
+{
+  "status": "degraded",
+  "service": "IntelliRAG API",
+  "version": "0.1.0",
+  "environment": "development",
+  "database": "unavailable"
+}
+```

@@ -1,12 +1,13 @@
 import React from 'react'
-import { Bot, FileSearch, ShieldCheck, Zap } from 'lucide-react'
+import { Bot, FileSearch, ShieldCheck, Database } from 'lucide-react'
 
 export const HeroSection: React.FC = () => {
   return (
     <div className="py-12 sm:py-16 text-center relative overflow-hidden">
+      <div className="absolute inset-0 bg-radial from-indigo-500/10 via-transparent to-transparent pointer-events-none" />
       <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs text-indigo-300 mb-6">
-        <Zap className="w-3.5 h-3.5 text-indigo-400" />
-        <span>Module 1: Full-Stack Project Foundation Established</span>
+        <Database className="w-3.5 h-3.5 text-indigo-400" />
+        <span>Module 2: PostgreSQL, SQLAlchemy & pgvector Layer Established</span>
       </div>
       <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-tight">
         Multimodal AI Document Intelligence Platform

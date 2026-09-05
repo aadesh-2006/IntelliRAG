@@ -13,7 +13,7 @@ export const Header: React.FC = () => {
             <div className="flex items-center space-x-2">
               <span className="font-bold text-lg text-white tracking-tight">IntelliRAG</span>
               <span className="px-2 py-0.5 text-[10px] uppercase font-semibold tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full">
-                Module 1
+                Module 2
               </span>
             </div>
             <p className="text-[11px] text-slate-400">Multimodal AI Document Intelligence Platform</p>
@@ -33,7 +33,7 @@ export const Header: React.FC = () => {
           <div className="h-4 w-px bg-slate-800" />
           <div className="flex items-center space-x-1.5 text-xs text-slate-400">
             <Layers className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Foundation Ready</span>
+            <span>Persistence Ready</span>
           </div>
         </div>
       </div>

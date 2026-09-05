@@ -5,6 +5,7 @@ export interface HealthStatus {
   service: string
   version: string
   environment: string
+  database: string
 }
 
 export async function checkBackendHealth(): Promise<HealthStatus> {

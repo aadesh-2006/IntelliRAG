@@ -1,5 +1,5 @@
 import React from 'react'
-import { Activity, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react'
+import { Activity, CheckCircle2, AlertCircle, RefreshCw, Database } from 'lucide-react'
 import { HealthStatus } from '../api/health'
 
 interface StatusBadgeProps {
@@ -21,7 +21,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
         <div className="flex items-center space-x-2">
           <Activity className="w-5 h-5 text-indigo-400" />
           <h3 className="font-semibold text-slate-200 text-sm tracking-wide uppercase">
-            Backend API Health Status
+            System & Database Health Status
           </h3>
         </div>
         <button
@@ -55,14 +55,34 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
 
       {status && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between bg-emerald-950/40 border border-emerald-800/50 rounded-lg p-3 text-emerald-200">
-            <div className="flex items-center space-x-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-              <span className="text-sm font-medium">FastAPI Service Connected</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="flex items-center justify-between bg-emerald-950/40 border border-emerald-800/50 rounded-lg p-3 text-emerald-200">
+              <div className="flex items-center space-x-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                <span className="text-sm font-medium">FastAPI Service</span>
+              </div>
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-900/80 text-emerald-300 uppercase tracking-wider">
+                {status.status}
+              </span>
             </div>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-900/80 text-emerald-300 uppercase tracking-wider">
-              {status.status}
-            </span>
+
+            <div className={`flex items-center justify-between rounded-lg p-3 ${
+              status.database === 'connected'
+                ? 'bg-emerald-950/40 border border-emerald-800/50 text-emerald-200'
+                : 'bg-amber-950/40 border border-amber-800/50 text-amber-200'
+            }`}>
+              <div className="flex items-center space-x-2">
+                <Database className={`w-5 h-5 ${status.database === 'connected' ? 'text-emerald-400' : 'text-amber-400'}`} />
+                <span className="text-sm font-medium">PostgreSQL / pgvector</span>
+              </div>
+              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
+                status.database === 'connected'
+                  ? 'bg-emerald-900/80 text-emerald-300'
+                  : 'bg-amber-900/80 text-amber-300'
+              }`}>
+                {status.database}
+              </span>
+            </div>
           </div>
 
           <div className="grid grid-cols-3 gap-2.5 pt-1">

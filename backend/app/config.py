@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     CORS_ORIGINS: Union[List[str], str] = ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"]
     HOST: str = "0.0.0.0"
     PORT: int = 8000
+    DATABASE_URL: str = "postgresql+psycopg://postgres:postgres@localhost:5432/intellirag"
+    VECTOR_DIMENSION: int = 768
+    DB_POOL_SIZE: int = 5
+    DB_MAX_OVERFLOW: int = 10
 
     @field_validator("CORS_ORIGINS", mode="before")
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
