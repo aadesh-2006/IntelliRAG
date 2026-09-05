@@ -83,6 +83,6 @@ def test_alembic_configuration():
     alembic_cfg.set_main_option("script_location", os.path.join(base_dir, "alembic"))
     script = ScriptDirectory.from_config(alembic_cfg)
     revisions = list(script.walk_revisions())
-    assert len(revisions) >= 3
+    assert len(revisions) >= 4
     head_rev = revisions[0]
-    assert head_rev.revision == "003_add_document_processing_fields"
+    assert head_rev.revision == "004_add_vector_indexes"

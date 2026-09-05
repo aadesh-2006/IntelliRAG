@@ -12,6 +12,7 @@ from app.schemas.processing import (
     ProcessingTriggerResponse,
     DocumentContentResponse,
 )
+from app.schemas.chunk import ChunkResponse, ChunkListResponse, EmbedTriggerResponse
 
 __all__ = [
     "HealthResponse",
@@ -30,4 +31,7 @@ __all__ = [
     "ExtractedDocument",
     "ProcessingTriggerResponse",
     "DocumentContentResponse",
+    "ChunkResponse",
+    "ChunkListResponse",
+    "EmbedTriggerResponse",
 ]

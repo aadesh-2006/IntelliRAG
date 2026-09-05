@@ -6,14 +6,20 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.user import User
 from app.api.deps import get_current_user
+from app.config import settings
 from app.schemas.document import DocumentResponse, DocumentListResponse
 from app.schemas.processing import DocumentContentResponse
+from app.schemas.chunk import ChunkResponse, ChunkListResponse
 from app.services.document_service import (
     create_document,
     list_documents,
     get_document_by_id,
     delete_document,
     process_document_by_id,
+)
+from app.services.document_chunk_service import (
+    generate_and_store_chunks,
+    list_document_chunks,
 )
 from app.services.storage_service import storage_service
 
@@ -109,6 +115,43 @@ def get_document_content(
         processing_error=document.processing_error,
         extracted_text=document.extracted_text,
         extracted_metadata=document.extracted_metadata
+    )
+
+@router.post("/{document_id}/embed", response_model=ChunkListResponse)
+def embed_document(
+    document_id: uuid.UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ChunkListResponse:
+    chunks = generate_and_store_chunks(db, document_id, current_user.id)
+    doc = get_document_by_id(db, document_id, current_user.id)
+    return ChunkListResponse(
+        items=[ChunkResponse.model_validate(c) for c in chunks],
+        total=len(chunks),
+        document_id=document_id,
+        status=doc.status if doc else "READY",
+        embedding_dimension=settings.VECTOR_DIMENSION
+    )
+
+@router.get("/{document_id}/chunks", response_model=ChunkListResponse)
+def get_document_chunks(
+    document_id: uuid.UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ChunkListResponse:
+    doc = get_document_by_id(db, document_id, current_user.id)
+    if not doc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Document not found"
+        )
+    chunks = list_document_chunks(db, document_id, current_user.id)
+    return ChunkListResponse(
+        items=[ChunkResponse.model_validate(c) for c in chunks],
+        total=len(chunks),
+        document_id=document_id,
+        status=doc.status,
+        embedding_dimension=settings.VECTOR_DIMENSION
     )
 
 @router.get("/{document_id}/download")

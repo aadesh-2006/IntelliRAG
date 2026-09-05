@@ -1,7 +1,7 @@
+import json
 from typing import List, Union
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-import json
 
 class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
@@ -22,6 +22,13 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = "storage/uploads"
     MAX_FILE_SIZE_MB: int = 50
     ALLOWED_EXTENSIONS: Union[List[str], str] = ["pdf", "png", "jpg", "jpeg", "txt", "docx", "csv"]
+    
+    CHUNK_SIZE: int = 500
+    CHUNK_OVERLAP: int = 50
+    MIN_CHUNK_SIZE: int = 50
+    MAX_CHUNK_SIZE: int = 1500
+    EMBEDDING_MODEL_NAME: str = "sentence-transformers/all-mpnet-base-v2"
+    EMBEDDING_BATCH_SIZE: int = 32
 
     @field_validator("CORS_ORIGINS", "ALLOWED_EXTENSIONS", mode="before")
     def assemble_list_fields(cls, v: Union[str, List[str]]) -> List[str]:

@@ -69,7 +69,7 @@ export interface DocumentItem {
   original_filename: string
   file_type: string
   file_size: number
-  status: 'UPLOADED' | 'PROCESSING' | 'PROCESSED' | 'FAILED' | string
+  status: 'UPLOADED' | 'PROCESSING' | 'PROCESSED' | 'EMBEDDING' | 'READY' | 'FAILED' | string
   document_type: DocumentType | string
   processed_at?: string
   processing_error?: string
@@ -94,6 +94,33 @@ export interface DocumentListResponse {
   total: number
   limit: number
   offset: number
+}
+
+export interface ChunkItem {
+  id: string
+  document_id: string
+  chunk_index: number
+  content: string
+  metadata?: {
+    page_number?: number
+    section?: string
+    block_type?: string
+    is_table?: boolean
+    table_index?: number
+    table_headers?: string[]
+    character_length?: number
+    token_count?: number
+    [key: string]: unknown
+  }
+  created_at: string
+}
+
+export interface ChunkListResponse {
+  items: ChunkItem[]
+  total: number
+  document_id: string
+  status: string
+  embedding_dimension: number
 }
 
 export async function uploadDocument(
@@ -142,6 +169,18 @@ export async function processDocument(id: string): Promise<DocumentContentRespon
 
 export async function getDocumentContent(id: string): Promise<DocumentContentResponse> {
   return fetchApi<DocumentContentResponse>(`/api/documents/${id}/content`, {
+    method: 'GET',
+  })
+}
+
+export async function embedDocument(id: string): Promise<ChunkListResponse> {
+  return fetchApi<ChunkListResponse>(`/api/documents/${id}/embed`, {
+    method: 'POST',
+  })
+}
+
+export async function getDocumentChunks(id: string): Promise<ChunkListResponse> {
+  return fetchApi<ChunkListResponse>(`/api/documents/${id}/chunks`, {
     method: 'GET',
   })
 }

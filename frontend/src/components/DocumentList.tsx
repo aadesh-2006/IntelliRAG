@@ -11,10 +11,20 @@ import {
   Clock,
   HardDrive,
   Sparkles,
-  ScanText
+  ScanText,
+  Database,
+  Layers
 } from 'lucide-react'
-import { getDocuments, deleteDocument, downloadDocument, processDocument, DocumentItem } from '../api/documents'
+import {
+  getDocuments,
+  deleteDocument,
+  downloadDocument,
+  processDocument,
+  embedDocument,
+  DocumentItem
+} from '../api/documents'
 import { DocumentInspectionModal } from './DocumentInspectionModal'
+import { DocumentChunksModal } from './DocumentChunksModal'
 
 interface DocumentListProps {
   refreshTrigger: number
@@ -37,6 +47,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({ refreshTrigger }) =>
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [inspectDocId, setInspectDocId] = useState<string | null>(null)
+  const [chunksDoc, setChunksDoc] = useState<{ id: string; name: string } | null>(null)
 
   const fetchDocs = useCallback(async () => {
     setLoading(true)
@@ -70,6 +81,23 @@ export const DocumentList: React.FC<DocumentListProps> = ({ refreshTrigger }) =>
         alert(err.message)
       } else {
         alert('Failed to process document')
+      }
+      await fetchDocs()
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleEmbed = async (docId: string) => {
+    setActionLoading(docId)
+    try {
+      await embedDocument(docId)
+      await fetchDocs()
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message)
+      } else {
+        alert('Failed to generate embeddings')
       }
       await fetchDocs()
     } finally {
@@ -149,6 +177,19 @@ export const DocumentList: React.FC<DocumentListProps> = ({ refreshTrigger }) =>
 
   const renderStatusBadge = (status: string, errorMsg?: string) => {
     switch (status) {
+      case 'READY':
+        return (
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 inline-flex items-center space-x-1">
+            <span>READY · 768d</span>
+          </span>
+        )
+      case 'EMBEDDING':
+        return (
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 inline-flex items-center space-x-1">
+            <Loader2 className="w-2.5 h-2.5 animate-spin" />
+            <span>EMBEDDING</span>
+          </span>
+        )
       case 'PROCESSED':
         return (
           <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center space-x-1">
@@ -195,7 +236,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({ refreshTrigger }) =>
                   {total}
                 </span>
               </div>
-              <p className="text-xs text-slate-400">Isolated document storage & AI layout analysis</p>
+              <p className="text-xs text-slate-400">Isolated document storage, AI extraction & pgvector indexing</p>
             </div>
           </div>
 
@@ -291,18 +332,10 @@ export const DocumentList: React.FC<DocumentListProps> = ({ refreshTrigger }) =>
                     </td>
                     <td className="py-3.5 pr-2 text-right whitespace-nowrap">
                       <div className="inline-flex items-center space-x-1.5">
-                        {doc.status === 'PROCESSED' ? (
-                          <button
-                            onClick={() => setInspectDocId(doc.id)}
-                            title="Inspect extraction & layout"
-                            className="p-1.5 rounded-lg bg-indigo-950/40 hover:bg-indigo-900/60 text-indigo-300 hover:text-white border border-indigo-800/40 transition-colors"
-                          >
-                            <ScanText className="w-3.5 h-3.5" />
-                          </button>
-                        ) : (
+                        {doc.status === 'UPLOADED' || doc.status === 'FAILED' ? (
                           <button
                             onClick={() => handleProcess(doc.id)}
-                            disabled={actionLoading === doc.id || doc.status === 'PROCESSING'}
+                            disabled={actionLoading === doc.id}
                             title="Process Document AI"
                             className="p-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/30 transition-colors disabled:opacity-50"
                           >
@@ -312,7 +345,58 @@ export const DocumentList: React.FC<DocumentListProps> = ({ refreshTrigger }) =>
                               <Sparkles className="w-3.5 h-3.5" />
                             )}
                           </button>
-                        )}
+                        ) : null}
+
+                        {doc.status === 'PROCESSED' ? (
+                          <>
+                            <button
+                              onClick={() => setInspectDocId(doc.id)}
+                              title="Inspect extraction & layout"
+                              className="p-1.5 rounded-lg bg-indigo-950/40 hover:bg-indigo-900/60 text-indigo-300 hover:text-white border border-indigo-800/40 transition-colors"
+                            >
+                              <ScanText className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleEmbed(doc.id)}
+                              disabled={actionLoading === doc.id}
+                              title="Generate Embeddings (pgvector)"
+                              className="p-1.5 rounded-lg bg-cyan-600/20 hover:bg-cyan-600 text-cyan-300 hover:text-white border border-cyan-500/30 transition-colors disabled:opacity-50"
+                            >
+                              {actionLoading === doc.id ? (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              ) : (
+                                <Database className="w-3.5 h-3.5" />
+                              )}
+                            </button>
+                          </>
+                        ) : null}
+
+                        {doc.status === 'READY' ? (
+                          <>
+                            <button
+                              onClick={() => setInspectDocId(doc.id)}
+                              title="Inspect extraction & layout"
+                              className="p-1.5 rounded-lg bg-indigo-950/40 hover:bg-indigo-900/60 text-indigo-300 hover:text-white border border-indigo-800/40 transition-colors"
+                            >
+                              <ScanText className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => setChunksDoc({ id: doc.id, name: doc.original_filename })}
+                              title="Inspect Vector Chunks"
+                              className="p-1.5 rounded-lg bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-300 hover:text-white border border-cyan-800/40 transition-colors"
+                            >
+                              <Layers className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleEmbed(doc.id)}
+                              disabled={actionLoading === doc.id}
+                              title="Re-generate Embeddings"
+                              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                            >
+                              <RefreshCw className={`w-3.5 h-3.5 ${actionLoading === doc.id ? 'animate-spin' : ''}`} />
+                            </button>
+                          </>
+                        ) : null}
 
                         <button
                           onClick={() => handleDownload(doc.id, doc.original_filename)}
@@ -349,6 +433,14 @@ export const DocumentList: React.FC<DocumentListProps> = ({ refreshTrigger }) =>
         <DocumentInspectionModal
           documentId={inspectDocId}
           onClose={() => setInspectDocId(null)}
+        />
+      )}
+
+      {chunksDoc && (
+        <DocumentChunksModal
+          documentId={chunksDoc.id}
+          originalFilename={chunksDoc.name}
+          onClose={() => setChunksDoc(null)}
         />
       )}
     </>
