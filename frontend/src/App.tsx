@@ -7,6 +7,7 @@ import { Footer } from './components/Footer'
 import { AuthCard } from './components/AuthCard'
 import { DocumentUploadCard } from './components/DocumentUploadCard'
 import { DocumentList } from './components/DocumentList'
+import { SemanticSearchCard } from './components/SemanticSearchCard'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { checkBackendHealth, HealthStatus } from './api/health'
 import { ShieldCheck, UserCheck, Lock } from 'lucide-react'
@@ -103,6 +104,8 @@ export const AppContent: React.FC = () => {
                 <span>JWT Security Boundary Active</span>
               </div>
             </div>
+
+            <SemanticSearchCard refreshTrigger={refreshTrigger} />
 
             <DocumentUploadCard onUploadSuccess={handleUploadSuccess} />
 

@@ -23,27 +23,29 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - [x] **Module 4 — File & Document Management:** Secure streaming file upload pipeline, metadata tracking in PostgreSQL, isolated local/object storage abstraction, user-scoped document access controls, document download and deletion endpoints, and authenticated frontend upload/vault management.
 - [x] **Module 5 — Multimodal Document AI:** Safe PDF parsing with pdfplumber/pypdf, layout analysis (headings, paragraphs, bounding boxes), structured tabular extraction (rows, cells, headers), image OCR extraction (pytesseract/PIL), docx/structured text routing, document lifecycle processing states (`UPLOADED` -> `PROCESSING` -> `PROCESSED` / `FAILED`), and interactive document extraction inspection UI.
 - [x] **Module 6 — Chunking & Embeddings:** Structure-aware chunking preserving sections/headings/tables/bounding boxes, local CPU-compatible 768-dimensional vector embedding service, pgvector persistence, chunk inspection modal, and idempotency protection against duplicate embeddings.
-- [ ] **Module 7 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
-- [ ] **Module 8 — AI Analytics:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
-- [ ] **Module 9 — Dashboard:** Interactive dashboard UI, ingestion statistics, document explorer, and status monitoring. *(Planned)*
-- [ ] **Module 10 — Chat Interface:** Conversational document assistant, citation tracking, and groundedness visualizer. *(Planned)*
-- [ ] **Module 11 — Reminder Engine:** Actionable date detection, scheduled alerts, warranty/expiry tracking, and automated reminders. *(Planned)*
-- [ ] **Module 12 — Notification System:** Multi-channel alerting (email, in-app, webhooks) for document events and query alerts. *(Planned)*
-- [ ] **Module 13 — Cricket Scorecard AI:** Specialized multimodal extraction engine for cricket scorecards, player statistics, and match summaries. *(Planned)*
-- [ ] **Module 14 — End-to-End Integration:** Unified orchestration connecting ingestion, storage, search, synthesis, and UI workflows. *(Planned)*
-- [ ] **Module 15 — Testing & AI Evaluation:** Automated evaluation suite, retrieval precision/recall benchmarks, and regression testing. *(Planned)*
-- [ ] **Module 16 — Deployment & Final Polish:** Production containerization, CI/CD pipelines, rate limiting, and observability telemetry. *(Planned)*
+- [x] **Module 7 — Retrieval & Semantic Search:** pgvector cosine similarity search, query vector generation, distance/similarity scoring, top_k ranking, similarity threshold filtering, metadata & document-type scoping, and interactive frontend semantic query workspace.
+- [ ] **Module 8 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
+- [ ] **Module 9 — AI Analytics:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
+- [ ] **Module 10 — Dashboard:** Interactive dashboard UI, ingestion statistics, document explorer, and status monitoring. *(Planned)*
+- [ ] **Module 11 — Chat Interface:** Conversational document assistant, citation tracking, and groundedness visualizer. *(Planned)*
+- [ ] **Module 12 — Reminder Engine:** Actionable date detection, scheduled alerts, warranty/expiry tracking, and automated reminders. *(Planned)*
+- [ ] **Module 13 — Notification System:** Multi-channel alerting (email, in-app, webhooks) for document events and query alerts. *(Planned)*
+- [ ] **Module 14 — Cricket Scorecard AI:** Specialized multimodal extraction engine for cricket scorecards, player statistics, and match summaries. *(Planned)*
+- [ ] **Module 15 — End-to-End Integration:** Unified orchestration connecting ingestion, storage, search, synthesis, and UI workflows. *(Planned)*
+- [ ] **Module 16 — Testing & AI Evaluation:** Automated evaluation suite, retrieval precision/recall benchmarks, and regression testing. *(Planned)*
+- [ ] **Module 17 — Deployment & Final Polish:** Production containerization, CI/CD pipelines, rate limiting, and observability telemetry. *(Planned)*
 
 ---
 
 ## Tech Stack
 
-### Implemented (Modules 1, 2, 3, 4, 5 & 6)
+### Implemented (Modules 1, 2, 3, 4, 5, 6 & 7)
 - **Backend:** Python 3.13+, FastAPI, Uvicorn, Pydantic v2, Pydantic Settings, HTTPX, Pytest
 - **Authentication & Security:** PyJWT, bcrypt, OAuth2 Password Bearer flow
 - **Storage & File Management:** Chunked streaming file storage, UUID-isolated paths, extension & size validation
 - **Document AI & Extraction:** pdfplumber, pypdf, Pillow, pytesseract, python-docx, csv/json structured parser
 - **Chunking & Vector Embeddings:** Structure-aware chunker, 768-dim CPU embedding provider, batch embeddings, pgvector
+- **Semantic Search & Retrieval:** pgvector cosine distance `<=>`, top_k ranking, similarity threshold filtering, multi-tenant document isolation
 - **Database & Vectors:** PostgreSQL, SQLAlchemy 2.x, Alembic, psycopg 3 (binary), pgvector
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React
 - **DevOps:** Docker, Docker Compose (pgvector/pgvector:pg17)
@@ -73,7 +75,8 @@ IntelliRAG/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── auth.py
 │   │   │   │   ├── documents.py
-│   │   │   │   └── health.py
+│   │   │   │   ├── health.py
+│   │   │   │   └── retrieval.py
 │   │   │   ├── __init__.py
 │   │   │   ├── deps.py
 │   │   │   └── router.py
@@ -95,7 +98,8 @@ IntelliRAG/
 │   │   │   ├── chunk.py
 │   │   │   ├── document.py
 │   │   │   ├── health.py
-│   │   │   └── processing.py
+│   │   │   ├── processing.py
+│   │   │   └── retrieval.py
 │   │   ├── services/
 │   │   │   ├── document_processing/
 │   │   │   │   ├── __init__.py
@@ -112,6 +116,7 @@ IntelliRAG/
 │   │   │   ├── document_chunk_service.py
 │   │   │   ├── document_service.py
 │   │   │   ├── embedding_service.py
+│   │   │   ├── retrieval_service.py
 │   │   │   └── storage_service.py
 │   │   ├── __init__.py
 │   │   ├── config.py
@@ -124,7 +129,8 @@ IntelliRAG/
 │   │   ├── test_database.py
 │   │   ├── test_documents.py
 │   │   ├── test_health.py
-│   │   └── test_processing.py
+│   │   ├── test_processing.py
+│   │   └── test_retrieval.py
 │   ├── .env.example
 │   ├── alembic.ini
 │   ├── Dockerfile
@@ -138,7 +144,8 @@ IntelliRAG/
 │   │   │   ├── authStorage.ts
 │   │   │   ├── client.ts
 │   │   │   ├── documents.ts
-│   │   │   └── health.ts
+│   │   │   ├── health.ts
+│   │   │   └── retrieval.ts
 │   │   ├── components/
 │   │   │   ├── ArchitectureOverview.tsx
 │   │   │   ├── AuthCard.tsx
@@ -150,6 +157,7 @@ IntelliRAG/
 │   │   │   ├── Footer.tsx
 │   │   │   ├── Header.tsx
 │   │   │   ├── HeroSection.tsx
+│   │   │   ├── SemanticSearchCard.tsx
 │   │   │   └── StatusBadge.tsx
 │   │   ├── context/
 │   │   │   └── AuthContext.tsx
@@ -288,6 +296,9 @@ docker-compose up -d db
 - **`GET /api/documents/{document_id}/chunks`**: Retrieve generated vector chunks and source citation metadata (`Authorization: Bearer <token>` required).
 - **`GET /api/documents/{document_id}/download`**: Download document binary stream (`Authorization: Bearer <token>` required).
 - **`DELETE /api/documents/{document_id}`**: Delete document record, chunks, and storage file (`Authorization: Bearer <token>` required).
+
+### Semantic Search & Retrieval Endpoints
+- **`POST /api/retrieval/search`**: Query vector store for semantically similar chunks with pgvector cosine distance, top_k ranking, similarity threshold filtering, and document/document-type scoping (`Authorization: Bearer <token>` required).
 
 ### Interactive API Documentation
 - **Swagger UI:** `http://localhost:8000/api/docs`

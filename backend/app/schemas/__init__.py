@@ -13,6 +13,7 @@ from app.schemas.processing import (
     DocumentContentResponse,
 )
 from app.schemas.chunk import ChunkResponse, ChunkListResponse, EmbedTriggerResponse
+from app.schemas.retrieval import SearchQueryRequest, RetrievedChunk, SearchQueryResponse
 
 __all__ = [
     "HealthResponse",
@@ -34,4 +35,7 @@ __all__ = [
     "ChunkResponse",
     "ChunkListResponse",
     "EmbedTriggerResponse",
+    "SearchQueryRequest",
+    "RetrievedChunk",
+    "SearchQueryResponse",
 ]
