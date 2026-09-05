@@ -20,7 +20,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - [x] **Module 1 — Project Foundation:** Full-stack scaffold with FastAPI backend, React + TypeScript + Vite frontend, Tailwind CSS, decoupled API client layer, and health monitoring endpoints.
 - [x] **Module 2 — Database & Persistence:** PostgreSQL integration with SQLAlchemy 2.x, Alembic migrations, pgvector extension, foundational relational models (`User`, `Document`, `DocumentChunk`), and database health diagnostics.
 - [x] **Module 3 — Authentication & User Security:** User registration (`POST /api/auth/register`), login (`POST /api/auth/login`), bcrypt password hashing, JWT access token authentication, protected identity endpoint (`GET /api/auth/me`), and React authentication context with protected session UI.
-- [ ] **Module 4 — File & Document Management:** Secure file upload pipelines, metadata storage, object storage abstraction, and scoped document ownership. *(Planned)*
+- [x] **Module 4 — File & Document Management:** Secure streaming file upload pipeline, metadata tracking in PostgreSQL, isolated local/object storage abstraction, user-scoped document access controls, document download and deletion endpoints, and authenticated frontend upload/vault management.
 - [ ] **Module 5 — Multimodal Document AI:** PDF/image ingestion, layout parsing, OCR processing, and structured text/table extraction. *(Planned)*
 - [ ] **Module 6 — RAG Engine:** Chunking strategies, vector embeddings with pgvector, dense-sparse hybrid indexing, and semantic search. *(Planned)*
 - [ ] **Module 7 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
@@ -38,9 +38,10 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 
 ## Tech Stack
 
-### Implemented (Modules 1, 2 & 3)
+### Implemented (Modules 1, 2, 3 & 4)
 - **Backend:** Python 3.13+, FastAPI, Uvicorn, Pydantic v2, Pydantic Settings, HTTPX, Pytest
-- **Authentication & Security:** PyJWT, bcrypt, OAuth2 Bearer token flow
+- **Authentication & Security:** PyJWT, bcrypt, OAuth2 Password Bearer flow
+- **Storage & File Management:** Chunked streaming file storage, UUID-isolated paths, extension & size validation
 - **Database & Vectors:** PostgreSQL, SQLAlchemy 2.x, Alembic, psycopg 3 (binary), pgvector
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React
 - **DevOps:** Docker, Docker Compose (pgvector/pgvector:pg17)
@@ -67,6 +68,7 @@ IntelliRAG/
 │   │   │   ├── endpoints/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── auth.py
+│   │   │   │   ├── documents.py
 │   │   │   │   └── health.py
 │   │   │   ├── __init__.py
 │   │   │   ├── deps.py
@@ -86,17 +88,22 @@ IntelliRAG/
 │   │   ├── schemas/
 │   │   │   ├── __init__.py
 │   │   │   ├── auth.py
+│   │   │   ├── document.py
 │   │   │   └── health.py
 │   │   ├── services/
 │   │   │   ├── __init__.py
-│   │   │   └── auth_service.py
+│   │   │   ├── auth_service.py
+│   │   │   ├── document_service.py
+│   │   │   └── storage_service.py
 │   │   ├── __init__.py
 │   │   ├── config.py
 │   │   └── main.py
 │   ├── tests/
 │   │   ├── __init__.py
+│   │   ├── conftest.py
 │   │   ├── test_auth.py
 │   │   ├── test_database.py
+│   │   ├── test_documents.py
 │   │   └── test_health.py
 │   ├── .env.example
 │   ├── alembic.ini
@@ -110,10 +117,14 @@ IntelliRAG/
 │   │   │   ├── auth.ts
 │   │   │   ├── authStorage.ts
 │   │   │   ├── client.ts
+│   │   │   ├── documents.ts
 │   │   │   └── health.ts
 │   │   ├── components/
 │   │   │   ├── ArchitectureOverview.tsx
+│   │   │   ├── AuthCard.tsx
 │   │   │   ├── AuthModal.tsx
+│   │   │   ├── DocumentList.tsx
+│   │   │   ├── DocumentUploadCard.tsx
 │   │   │   ├── Footer.tsx
 │   │   │   ├── Header.tsx
 │   │   │   ├── HeroSection.tsx
@@ -235,7 +246,7 @@ docker-compose up -d db
 
 ---
 
-## Authentication & API Endpoints
+## API Endpoints Reference
 
 ### Health Check
 - **`GET /api/health`**: Returns system and PostgreSQL connection status.
@@ -244,6 +255,13 @@ docker-compose up -d db
 - **`POST /api/auth/register`**: Register a new user account (email + password).
 - **`POST /api/auth/login`**: Authenticate credentials and receive a JWT Bearer token.
 - **`GET /api/auth/me`**: Retrieve the authenticated user's profile (`Authorization: Bearer <token>` required).
+
+### Document Management Endpoints
+- **`POST /api/documents/upload`**: Upload a file (PDF, DOCX, TXT, CSV, JSON, images, Markdown) with classification type (`Authorization: Bearer <token>` required).
+- **`GET /api/documents`**: List authenticated user's uploaded documents with optional filtering and pagination (`Authorization: Bearer <token>` required).
+- **`GET /api/documents/{document_id}`**: Retrieve document metadata (`Authorization: Bearer <token>` required).
+- **`GET /api/documents/{document_id}/download`**: Download document binary stream (`Authorization: Bearer <token>` required).
+- **`DELETE /api/documents/{document_id}`**: Delete document record and storage file (`Authorization: Bearer <token>` required).
 
 ### Interactive API Documentation
 - **Swagger UI:** `http://localhost:8000/api/docs`

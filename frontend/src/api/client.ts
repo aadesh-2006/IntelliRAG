@@ -12,9 +12,14 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
     ? { Authorization: `Bearer ${token}` }
     : {}
 
+  const isFormData = options?.body instanceof FormData
+  const defaultHeaders: Record<string, string> = isFormData
+    ? {}
+    : { 'Content-Type': 'application/json' }
+
   const response = await fetch(url, {
     headers: {
-      'Content-Type': 'application/json',
+      ...defaultHeaders,
       ...authHeaders,
       ...options?.headers,
     },
@@ -36,6 +41,10 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
       }
     }
     throw new Error(errorMessage)
+  }
+
+  if (response.status === 204) {
+    return {} as T
   }
 
   return response.json()

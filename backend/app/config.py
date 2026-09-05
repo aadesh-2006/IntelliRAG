@@ -19,9 +19,12 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str = "changethis-insecure-development-jwt-secret-key-32charsmin"
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
+    UPLOAD_DIR: str = "storage/uploads"
+    MAX_FILE_SIZE_MB: int = 50
+    ALLOWED_EXTENSIONS: Union[List[str], str] = ["pdf", "png", "jpg", "jpeg", "txt", "docx", "csv"]
 
-    @field_validator("CORS_ORIGINS", mode="before")
-    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
+    @field_validator("CORS_ORIGINS", "ALLOWED_EXTENSIONS", mode="before")
+    def assemble_list_fields(cls, v: Union[str, List[str]]) -> List[str]:
         if isinstance(v, str):
             if v.startswith("[") and v.endswith("]"):
                 try:

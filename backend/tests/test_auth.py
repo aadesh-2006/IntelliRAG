@@ -1,13 +1,6 @@
 import uuid
 from datetime import timedelta
 import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
-from app.main import app
-from app.db.base import Base
-from app.db.session import get_db
 from app.core.security import (
     hash_password,
     verify_password,
@@ -15,32 +8,7 @@ from app.core.security import (
     decode_access_token,
 )
 from app.models.user import User
-
-SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///:memory:"
-
-test_engine = create_engine(
-    SQLALCHEMY_TEST_DATABASE_URL,
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
-
-@pytest.fixture(autouse=True)
-def setup_test_db():
-    Base.metadata.create_all(bind=test_engine)
-    yield
-    Base.metadata.drop_all(bind=test_engine)
-
-def override_get_db():
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-app.dependency_overrides[get_db] = override_get_db
-
-client = TestClient(app)
+from tests.conftest import TestingSessionLocal
 
 def test_password_hashing_and_verification():
     plain = "SuperSecurePassword123"
@@ -64,7 +32,7 @@ def test_expired_jwt_rejected():
     payload = decode_access_token(token)
     assert payload is None
 
-def test_user_registration_success():
+def test_user_registration_success(client):
     payload = {
         "email": "analyst@intellirag.ai",
         "password": "SecurePassword123"
@@ -78,7 +46,7 @@ def test_user_registration_success():
     assert "password" not in data
     assert "password_hash" not in data
 
-def test_duplicate_user_registration_rejected():
+def test_duplicate_user_registration_rejected(client):
     payload = {
         "email": "unique@intellirag.ai",
         "password": "SecurePassword123"
@@ -105,7 +73,7 @@ def test_plaintext_password_never_stored():
     assert verify_password("MyPlainPassword123", fetched_user.password_hash) is True
     db.close()
 
-def test_user_login_oauth2_form_success():
+def test_user_login_oauth2_form_success(client):
     client.post("/api/auth/register", json={
         "email": "member@intellirag.ai",
         "password": "CorrectPassword123"
@@ -119,7 +87,7 @@ def test_user_login_oauth2_form_success():
     assert "access_token" in data
     assert data["token_type"] == "bearer"
 
-def test_user_login_invalid_password():
+def test_user_login_invalid_password(client):
     client.post("/api/auth/register", json={
         "email": "member2@intellirag.ai",
         "password": "CorrectPassword123"
@@ -131,7 +99,7 @@ def test_user_login_invalid_password():
     assert login_res.status_code == 401
     assert "Incorrect email or password" in login_res.json()["detail"]
 
-def test_user_login_nonexistent_email():
+def test_user_login_nonexistent_email(client):
     login_res = client.post("/api/auth/login", data={
         "username": "unknown@intellirag.ai",
         "password": "CorrectPassword123"
@@ -139,7 +107,7 @@ def test_user_login_nonexistent_email():
     assert login_res.status_code == 401
     assert "Incorrect email or password" in login_res.json()["detail"]
 
-def test_get_me_with_valid_jwt():
+def test_get_me_with_valid_jwt(client):
     reg_res = client.post("/api/auth/register", json={
         "email": "profile@intellirag.ai",
         "password": "SecurePassword123"
@@ -159,10 +127,10 @@ def test_get_me_with_valid_jwt():
     assert data["email"] == "profile@intellirag.ai"
     assert "password_hash" not in data
 
-def test_get_me_without_jwt():
+def test_get_me_without_jwt(client):
     response = client.get("/api/auth/me")
     assert response.status_code == 401
 
-def test_get_me_with_malformed_jwt():
+def test_get_me_with_malformed_jwt(client):
     response = client.get("/api/auth/me", headers={"Authorization": "Bearer not-a-valid-token"})
     assert response.status_code == 401

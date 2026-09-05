@@ -5,6 +5,8 @@ import { StatusBadge } from './components/StatusBadge'
 import { ArchitectureOverview } from './components/ArchitectureOverview'
 import { Footer } from './components/Footer'
 import { AuthCard } from './components/AuthCard'
+import { DocumentUploadCard } from './components/DocumentUploadCard'
+import { DocumentList } from './components/DocumentList'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { checkBackendHealth, HealthStatus } from './api/health'
 import { ShieldCheck, UserCheck, Lock } from 'lucide-react'
@@ -14,6 +16,7 @@ export const AppContent: React.FC = () => {
   const [status, setStatus] = useState<HealthStatus | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [refreshTrigger, setRefreshTrigger] = useState<number>(0)
 
   const verifyHealth = useCallback(async () => {
     setLoading(true)
@@ -38,6 +41,10 @@ export const AppContent: React.FC = () => {
       verifyHealth()
     }
   }, [isAuthenticated, verifyHealth])
+
+  const handleUploadSuccess = () => {
+    setRefreshTrigger((prev) => prev + 1)
+  }
 
   if (isLoading) {
     return (
@@ -73,7 +80,7 @@ export const AppContent: React.FC = () => {
             <AuthCard />
           </div>
         ) : (
-          <div className="space-y-12 animate-fade-in">
+          <div className="space-y-10 animate-fade-in">
             <div className="bg-gradient-to-r from-indigo-950/40 via-slate-900/60 to-slate-950 border border-indigo-900/40 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center space-x-3.5">
                 <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0">
@@ -96,6 +103,10 @@ export const AppContent: React.FC = () => {
                 <span>JWT Security Boundary Active</span>
               </div>
             </div>
+
+            <DocumentUploadCard onUploadSuccess={handleUploadSuccess} />
+
+            <DocumentList refreshTrigger={refreshTrigger} />
 
             <div className="max-w-2xl mx-auto">
               <StatusBadge
