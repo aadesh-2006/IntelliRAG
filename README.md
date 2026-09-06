@@ -30,7 +30,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - [x] **Module 11 — Reminder Engine:** Production-grade reminder engine, context-aware actionable date extraction (warranties, expiries, renewals, payment due dates, deadlines), lead-time alert calculations, document date scanner, and complete CRUD reminder tracking workspace.
 - [x] **Module 12 — Notification System:** Multi-channel alerting (In-App notifications, Email SMTP transport, Webhook dispatching with HMAC-SHA256 signatures), idempotent event key deduplication, notification retry worker, and user preference management.
 - [x] **Module 13 — Cricket Scorecard AI:** Multimodal cricket scorecard intelligence pipeline (scorecard detection, innings and batting/bowling performance extraction, overs/balls/strike rate/economy rate normalization, domain integrity validation, player career statistics across scorecards, and deterministic factual match summary synthesis).
-- [ ] **Module 14 — End-to-End Integration:** Unified orchestration connecting ingestion, storage, search, synthesis, and UI workflows. *(Planned)*
+- [x] **Module 14 — End-to-End Integration:** Complete cross-module integration test suite and lifecycle validation covering document upload, processing, structure-aware chunking, vector embedding, semantic retrieval, RAG answer generation, query routing (SQL/RAG/HYBRID), chat orchestration, actionable date extraction, reminder scheduling, multi-channel notifications (deduplication & retry), cricket scorecard analytics, and multi-tenant security isolation.
 - [ ] **Module 15 — Testing & AI Evaluation:** Automated evaluation suite, retrieval precision/recall benchmarks, and regression testing. *(Planned)*
 - [ ] **Module 16 — Deployment & Final Polish:** Production containerization, CI/CD pipelines, rate limiting, and observability telemetry. *(Planned)*
 
@@ -38,7 +38,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 
 ## Tech Stack
 
-### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 & 13)
+### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 & 14)
 - **Intelligent Query Router & Analytics Engine:** Query intent classification heuristics, natural date parser (UTC normalized), safe parameterized SQLAlchemy ORM aggregations (zero arbitrary raw SQL), strict user isolation, Gemini/LLM explanation of authoritative database facts, RAG retrieval routing, and hybrid structured + vector answer synthesizer
 - **Backend:** Python 3.13+, FastAPI, Uvicorn, Pydantic v2, Pydantic Settings, HTTPX, Pytest
 - **Authentication & Security:** PyJWT, bcrypt, OAuth2 Password Bearer flow
@@ -51,6 +51,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - **Conversational Chat:** Multi-turn conversation sessions, bounded message context window, citation sources, retrieval grounding signals
 - **Reminder Engine & Date Intelligence:** Context-aware date extraction regex engine, table cell mapping, warranty/expiry/renewal tracking, lead-time delta computation, due state transitions
 - **Notification Delivery Engine:** Multi-channel notification pipeline (In-App, Email/SMTP, HMAC-signed Webhooks), user preference routing, retry queue, unread counters
+- **End-to-End Integration & Security Isolation:** Comprehensive cross-module integration test suite (27 scenarios) validating full document lifecycles (`UPLOADED` -> `PROCESSING` -> `PROCESSED` -> `READY`), error handling/idempotency, prompt injection & SQL injection rejection, notification deduplication & retry, cricket analytics pipelines, and multi-tenant user isolation across all entities
 - **Cricket Scorecard Intelligence:** Specialized scorecard layout detection, innings and batting/bowling statistics extraction, overs/balls/strike rate/economy rate normalization, domain integrity validation, multi-match career statistics aggregation, and deterministic factual match summary synthesis
 - **Database & Vectors:** PostgreSQL, SQLAlchemy 2.x, Alembic, psycopg 3 (binary), pgvector
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React
@@ -199,6 +200,7 @@ IntelliRAG/
 │   │   ├── test_dashboard.py
 │   │   ├── test_database.py
 │   │   ├── test_documents.py
+│   │   ├── test_e2e_integration.py
 │   │   ├── test_health.py
 │   │   ├── test_notifications.py
 │   │   ├── test_processing.py
