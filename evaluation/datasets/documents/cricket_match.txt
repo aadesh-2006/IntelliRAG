@@ -1,0 +1,30 @@
+MATCH SCORECARD: Champions Trophy Final 2025
+Match Date: 2025-03-09
+Venue: Lord's Cricket Ground, London
+Toss: Mumbai Mavericks won toss and elected to bat.
+
+INNINGS 1: Mumbai Mavericks
+Batter,Runs,Balls,Fours,Sixes,SR
+Rohit Sharma (c),85,60,8,4,141.67
+Virat Kohli,72,50,6,2,144.00
+Suryakumar Yadav,45,22,4,3,204.55
+Hardik Pandya,30,15,2,2,200.00
+Extras: 12
+Total Score: 244/4 (20.0 Overs)
+
+INNINGS 2: London Royals
+Batter,Runs,Balls,Fours,Sixes,SR
+Jos Buttler (c),65,42,7,3,154.76
+Ben Stokes,40,28,3,2,142.86
+Liam Livingstone,25,14,1,2,178.57
+Extras: 8
+Total Score: 210/8 (20.0 Overs)
+
+BOWLING STATS:
+Bowler,Overs,Maidens,Runs,Wickets,Economy
+Jasprit Bumrah,4.0,1,18,3,4.50
+Jofra Archer,4.0,0,38,2,9.50
+Rashid Khan,4.0,0,28,2,7.00
+
+Result: Mumbai Mavericks won by 34 runs.
+Player of the Match: Rohit Sharma

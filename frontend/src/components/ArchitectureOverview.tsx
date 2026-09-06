@@ -208,6 +208,20 @@ export const ArchitectureOverview: React.FC = () => {
           <p className="text-xs text-slate-400 mt-1">Cross-module verification connecting ingestion, pgvector search, router, reminders, notifications, cricket analytics, and UI workflows.</p>
         </div>
 
+        <div className="border border-indigo-500/40 bg-indigo-950/20 rounded-xl p-4 relative overflow-hidden">
+          <div className="flex items-center justify-between mb-3">
+            <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-400">
+              <Check className="w-5 h-5" />
+            </div>
+            <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <Check className="w-3 h-3" />
+              <span>Module 15 Completed</span>
+            </span>
+          </div>
+          <h4 className="text-sm font-bold text-slate-100">Testing &amp; AI Evaluation</h4>
+          <p className="text-xs text-slate-400 mt-1">Dedicated AI evaluation framework measuring document extraction accuracy, Recall@K, Precision@K, MRR@K, NDCG@K, groundedness, and citations.</p>
+        </div>
+
         <div className="border border-slate-800 bg-slate-950/40 rounded-xl p-4 relative overflow-hidden opacity-75">
           <div className="flex items-center justify-between mb-3">
             <div className="p-2 rounded-lg bg-slate-800 text-slate-400">
@@ -215,11 +229,11 @@ export const ArchitectureOverview: React.FC = () => {
             </div>
             <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700">
               <Clock className="w-3 h-3" />
-              <span>Module 15 Planned</span>
+              <span>Module 16 Planned</span>
             </span>
           </div>
-          <h4 className="text-sm font-bold text-slate-100">Testing &amp; AI Evaluation</h4>
-          <p className="text-xs text-slate-400 mt-1">Automated evaluation framework, retrieval benchmarks, faithfulness scoring, and regression test suites.</p>
+          <h4 className="text-sm font-bold text-slate-100">Deployment &amp; Final Polish</h4>
+          <p className="text-xs text-slate-400 mt-1">Production containerization, cloud PaaS deployment, rate limiting, and final observability telemetry.</p>
         </div>
       </div>
     </div>

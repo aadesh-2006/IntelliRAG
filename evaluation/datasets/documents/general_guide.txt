@@ -1,0 +1,19 @@
+INTELLIRAG SYSTEM ARCHITECTURE & USER GUIDE
+Version: 1.0.0
+Author: DeepMind Engineering
+
+1. Overview
+IntelliRAG is a high-performance multimodal document intelligence platform.
+It ingests unstructured documents, parses layout blocks, generates 768-dimensional embeddings, and indexes them in pgvector for similarity search.
+
+2. Chunking Strategy
+Documents are partitioned using structure-aware chunking:
+- Headings demarcate logical section boundaries.
+- Tables are formatted into Markdown representations.
+- Chunk size is bounded between 50 and 1500 characters.
+
+3. Query Routing
+Incoming queries are classified into SQL, RAG, or HYBRID routes:
+- Metadata and structured aggregations route to SQL.
+- Unstructured narrative questions route to dense vector RAG search.
+- Multi-faceted questions route to HYBRID synthesis.

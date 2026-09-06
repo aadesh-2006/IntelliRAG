@@ -1,0 +1,23 @@
+{
+  "document_filename": "policy_doc.txt",
+  "document_type": "INSURANCE",
+  "fields": {
+    "policy_number": "POL-99281-X",
+    "effective_date": "2025-01-15",
+    "expiration_date": "2026-01-15",
+    "annual_premium": 1450.0,
+    "coverage_limit": 500000.0,
+    "deductible": 1000.0,
+    "underwriter": "Apex Mutual Indemnity Corp."
+  },
+  "actionable_dates": [
+    {
+      "date": "2025-01-15",
+      "type": "EFFECTIVE_DATE"
+    },
+    {
+      "date": "2026-01-15",
+      "type": "EXPIRY"
+    }
+  ]
+}

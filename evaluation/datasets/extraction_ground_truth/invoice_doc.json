@@ -1,0 +1,9 @@
+{
+  "document_filename": "invoice_doc.csv",
+  "document_type": "INVOICE",
+  "fields": {
+    "total_invoice_balance": 1800.0,
+    "total_items_count": 3
+  },
+  "actionable_dates": []
+}

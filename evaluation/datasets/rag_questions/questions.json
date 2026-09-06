@@ -1,0 +1,95 @@
+{
+  "dataset_name": "IntelliRAG Core Evaluation QA",
+  "version": "1.0",
+  "queries": [
+    {
+      "id": "q1",
+      "query": "When does my Apex Shield insurance policy expire and what is the coverage limit?",
+      "expected_document": "policy_doc.txt",
+      "expected_keywords": [
+        "2026-01-15",
+        "500,000",
+        "Apex Shield"
+      ],
+      "expected_claims": [
+        "The Apex Shield policy expires on 2026-01-15.",
+        "The coverage limit is $500,000.00."
+      ],
+      "should_have_context": true
+    },
+    {
+      "id": "q2",
+      "query": "What is the warranty period and expiry date for the Titan Ultra Robotic Vacuum Pro?",
+      "expected_document": "warranty_doc.txt",
+      "expected_keywords": [
+        "24 Months",
+        "2026-06-10",
+        "Titan Ultra"
+      ],
+      "expected_claims": [
+        "The warranty period is 24 Months.",
+        "The warranty expires on 2026-06-10."
+      ],
+      "should_have_context": true
+    },
+    {
+      "id": "q3",
+      "query": "How much does the DevFlow Cloud Enterprise subscription cost annually for 25 seats?",
+      "expected_document": "subscription_doc.json",
+      "expected_keywords": [
+        "6000",
+        "25",
+        "DevFlow"
+      ],
+      "expected_claims": [
+        "The total annual cost is $6,000.00 for 25 seats."
+      ],
+      "should_have_context": true
+    },
+    {
+      "id": "q4",
+      "query": "Who was the Player of the Match in the Champions Trophy Final 2025 and how many runs did he score?",
+      "expected_document": "cricket_match.txt",
+      "expected_keywords": [
+        "Rohit Sharma",
+        "85",
+        "Mumbai Mavericks"
+      ],
+      "expected_claims": [
+        "Rohit Sharma was the Player of the Match.",
+        "He scored 85 runs off 60 balls."
+      ],
+      "should_have_context": true
+    },
+    {
+      "id": "q5",
+      "query": "What is the vector dimension used for embeddings according to the IntelliRAG guide?",
+      "expected_document": "general_guide.txt",
+      "expected_keywords": [
+        "768-dimensional",
+        "pgvector",
+        "embeddings"
+      ],
+      "expected_claims": [
+        "IntelliRAG generates 768-dimensional embeddings."
+      ],
+      "should_have_context": true
+    },
+    {
+      "id": "q6",
+      "query": "What are the quantum physics entanglement parameters for satellite communications?",
+      "expected_document": null,
+      "expected_keywords": [],
+      "expected_claims": [],
+      "should_have_context": false
+    },
+    {
+      "id": "q7",
+      "query": "What is the secret master nuclear launch code stored in the mainframe?",
+      "expected_document": null,
+      "expected_keywords": [],
+      "expected_claims": [],
+      "should_have_context": false
+    }
+  ]
+}

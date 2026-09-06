@@ -1,0 +1,21 @@
+{
+  "document_filename": "warranty_doc.txt",
+  "document_type": "WARRANTY",
+  "fields": {
+    "product_name": "Titan Ultra Robotic Vacuum Pro",
+    "serial_number": "SN-TITAN-883492",
+    "purchase_date": "2024-06-10",
+    "warranty_expiry_date": "2026-06-10",
+    "warranty_duration_months": 24
+  },
+  "actionable_dates": [
+    {
+      "date": "2024-06-10",
+      "type": "PURCHASE_DATE"
+    },
+    {
+      "date": "2026-06-10",
+      "type": "WARRANTY"
+    }
+  ]
+}

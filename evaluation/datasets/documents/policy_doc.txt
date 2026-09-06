@@ -1,0 +1,15 @@
+APEX SHIELD INSURANCE POLICY
+Policy Number: POL-99281-X
+Policyholder: Alex Mercer
+Document Type: Insurance Policy
+Effective Date: 2025-01-15
+Expiration Date: 2026-01-15
+Coverage Type: Comprehensive Property & Liability
+Annual Premium: $1,450.00
+Coverage Limit: $500,000.00
+Deductible: $1,000.00
+Underwriter: Apex Mutual Indemnity Corp.
+Key Clauses:
+- Water damage is covered up to $50,000 with a separate $500 deductible.
+- Natural flood damage requires a supplementary rider.
+- Claims must be filed within 30 days of incident.

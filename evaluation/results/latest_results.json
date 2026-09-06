@@ -1,0 +1,731 @@
+{
+  "evaluation_run_id": "9b7b5606-e18d-4039-835e-591874f995b2",
+  "timestamp": "2026-09-06T13:30:08.644574+00:00",
+  "dataset_version": "1.0",
+  "model_info": {
+    "llm_provider": "mock",
+    "llm_model": "gemini-1.5-flash",
+    "embedding_model": "sentence-transformers/all-mpnet-base-v2",
+    "vector_dimension": 768
+  },
+  "extraction": {
+    "overall_accuracy": 1.0,
+    "overall_exact_accuracy": 1.0,
+    "documents_evaluated": 5,
+    "document_results": [
+      {
+        "document_filename": "cricket_match.txt",
+        "document_type": "CRICKET_SCORECARD",
+        "status": "SUCCESS",
+        "exact_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "field_details": {
+          "match_title": {
+            "expected": "Champions Trophy Final 2025",
+            "actual": "Champions Trophy Final 2025",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "match_date": {
+            "expected": "2025-03-09",
+            "actual": "2025-03-09",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "winner_team": {
+            "expected": "Mumbai Mavericks",
+            "actual": "Mumbai Mavericks",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "player_of_match": {
+            "expected": "Rohit Sharma",
+            "actual": "Rohit Sharma",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "top_scorer": {
+            "expected": "Rohit Sharma",
+            "actual": "Rohit Sharma",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "top_scorer_runs": {
+            "expected": 85,
+            "actual": 85,
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "top_wicket_taker": {
+            "expected": "Jasprit Bumrah",
+            "actual": "Jasprit Bumrah",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "top_wicket_count": {
+            "expected": 3,
+            "actual": 3,
+            "exact_match": true,
+            "normalized_match": true
+          }
+        },
+        "date_evaluation": {
+          "expected_count": 1,
+          "actual_candidates_count": 0,
+          "matched_count": 0,
+          "date_recall": 0.0
+        }
+      },
+      {
+        "document_filename": "invoice_doc.csv",
+        "document_type": "INVOICE",
+        "status": "SUCCESS",
+        "exact_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "field_details": {
+          "total_invoice_balance": {
+            "expected": 1800.0,
+            "actual": 1800.0,
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "total_items_count": {
+            "expected": 3,
+            "actual": 3,
+            "exact_match": true,
+            "normalized_match": true
+          }
+        },
+        "date_evaluation": {
+          "expected_count": 0,
+          "actual_candidates_count": 0,
+          "matched_count": 0,
+          "date_recall": 1.0
+        }
+      },
+      {
+        "document_filename": "policy_doc.txt",
+        "document_type": "INSURANCE",
+        "status": "SUCCESS",
+        "exact_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "field_details": {
+          "policy_number": {
+            "expected": "POL-99281-X",
+            "actual": "POL-99281-X",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "effective_date": {
+            "expected": "2025-01-15",
+            "actual": "2025-01-15",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "expiration_date": {
+            "expected": "2026-01-15",
+            "actual": "2026-01-15",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "annual_premium": {
+            "expected": 1450.0,
+            "actual": 1450.0,
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "coverage_limit": {
+            "expected": 500000.0,
+            "actual": 500000.0,
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "deductible": {
+            "expected": 1000.0,
+            "actual": 1000.0,
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "underwriter": {
+            "expected": "Apex Mutual Indemnity Corp.",
+            "actual": "Apex Mutual Indemnity Corp.",
+            "exact_match": true,
+            "normalized_match": true
+          }
+        },
+        "date_evaluation": {
+          "expected_count": 2,
+          "actual_candidates_count": 1,
+          "matched_count": 1,
+          "date_recall": 0.5
+        }
+      },
+      {
+        "document_filename": "subscription_doc.json",
+        "document_type": "SUBSCRIPTION",
+        "status": "SUCCESS",
+        "exact_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "field_details": {
+          "service_name": {
+            "expected": "DevFlow Cloud Enterprise",
+            "actual": "DevFlow Cloud Enterprise",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "subscription_id": {
+            "expected": "SUB-77312",
+            "actual": "SUB-77312",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "plan": {
+            "expected": "Enterprise Tier",
+            "actual": "Enterprise Tier",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "billing_cycle": {
+            "expected": "Annual",
+            "actual": "Annual",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "start_date": {
+            "expected": "2024-11-01",
+            "actual": "2024-11-01",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "renewal_date": {
+            "expected": "2025-11-01",
+            "actual": "2025-11-01",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "seat_count": {
+            "expected": 25,
+            "actual": 25,
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "total_annual_cost": {
+            "expected": 6000.0,
+            "actual": 6000.0,
+            "exact_match": true,
+            "normalized_match": true
+          }
+        },
+        "date_evaluation": {
+          "expected_count": 2,
+          "actual_candidates_count": 0,
+          "matched_count": 0,
+          "date_recall": 0.0
+        }
+      },
+      {
+        "document_filename": "warranty_doc.txt",
+        "document_type": "WARRANTY",
+        "status": "SUCCESS",
+        "exact_accuracy": 1.0,
+        "normalized_accuracy": 1.0,
+        "field_details": {
+          "product_name": {
+            "expected": "Titan Ultra Robotic Vacuum Pro",
+            "actual": "Titan Ultra Robotic Vacuum Pro",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "serial_number": {
+            "expected": "SN-TITAN-883492",
+            "actual": "SN-TITAN-883492",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "purchase_date": {
+            "expected": "2024-06-10",
+            "actual": "2024-06-10",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "warranty_expiry_date": {
+            "expected": "2026-06-10",
+            "actual": "2026-06-10",
+            "exact_match": true,
+            "normalized_match": true
+          },
+          "warranty_duration_months": {
+            "expected": 24,
+            "actual": 24,
+            "exact_match": true,
+            "normalized_match": true
+          }
+        },
+        "date_evaluation": {
+          "expected_count": 2,
+          "actual_candidates_count": 1,
+          "matched_count": 1,
+          "date_recall": 0.5
+        }
+      }
+    ]
+  },
+  "retrieval": {
+    "total_queries": 7,
+    "relevant_queries_evaluated": 5,
+    "metrics": {
+      "recall@1": 0.8,
+      "recall@3": 0.8,
+      "recall@5": 1.0,
+      "precision@1": 0.8,
+      "precision@3": 0.2667,
+      "precision@5": 0.2,
+      "mrr@1": 0.8,
+      "mrr@3": 0.8,
+      "mrr@5": 0.85,
+      "ndcg@1": 0.8,
+      "ndcg@3": 0.8,
+      "ndcg@5": 0.8861
+    },
+    "query_details": [
+      {
+        "id": "q1",
+        "query": "When does my Apex Shield insurance policy expire and what is the coverage limit?",
+        "expected_document": "policy_doc.txt",
+        "retrieved_top_filenames": [
+          "policy_doc.txt",
+          "general_guide.txt",
+          "general_guide.txt"
+        ],
+        "top_similarity": 0.377,
+        "metrics": {
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333,
+          "precision@5": 0.2,
+          "mrr@1": 1.0,
+          "mrr@3": 1.0,
+          "mrr@5": 1.0,
+          "ndcg@1": 1.0,
+          "ndcg@3": 1.0,
+          "ndcg@5": 1.0
+        }
+      },
+      {
+        "id": "q2",
+        "query": "What is the warranty period and expiry date for the Titan Ultra Robotic Vacuum Pro?",
+        "expected_document": "warranty_doc.txt",
+        "retrieved_top_filenames": [
+          "warranty_doc.txt",
+          "policy_doc.txt",
+          "general_guide.txt"
+        ],
+        "top_similarity": 0.4098,
+        "metrics": {
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333,
+          "precision@5": 0.2,
+          "mrr@1": 1.0,
+          "mrr@3": 1.0,
+          "mrr@5": 1.0,
+          "ndcg@1": 1.0,
+          "ndcg@3": 1.0,
+          "ndcg@5": 1.0
+        }
+      },
+      {
+        "id": "q3",
+        "query": "How much does the DevFlow Cloud Enterprise subscription cost annually for 25 seats?",
+        "expected_document": "subscription_doc.json",
+        "retrieved_top_filenames": [
+          "general_guide.txt",
+          "general_guide.txt",
+          "warranty_doc.txt"
+        ],
+        "top_similarity": 0.2102,
+        "metrics": {
+          "recall@1": 0.0,
+          "recall@3": 0.0,
+          "recall@5": 1.0,
+          "precision@1": 0.0,
+          "precision@3": 0.0,
+          "precision@5": 0.2,
+          "mrr@1": 0.0,
+          "mrr@3": 0.0,
+          "mrr@5": 0.25,
+          "ndcg@1": 0.0,
+          "ndcg@3": 0.0,
+          "ndcg@5": 0.4307
+        }
+      },
+      {
+        "id": "q4",
+        "query": "Who was the Player of the Match in the Champions Trophy Final 2025 and how many runs did he score?",
+        "expected_document": "cricket_match.txt",
+        "retrieved_top_filenames": [
+          "cricket_match.txt",
+          "cricket_match.txt",
+          "general_guide.txt"
+        ],
+        "top_similarity": 0.3211,
+        "metrics": {
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333,
+          "precision@5": 0.2,
+          "mrr@1": 1.0,
+          "mrr@3": 1.0,
+          "mrr@5": 1.0,
+          "ndcg@1": 1.0,
+          "ndcg@3": 1.0,
+          "ndcg@5": 1.0
+        }
+      },
+      {
+        "id": "q5",
+        "query": "What is the vector dimension used for embeddings according to the IntelliRAG guide?",
+        "expected_document": "general_guide.txt",
+        "retrieved_top_filenames": [
+          "general_guide.txt",
+          "general_guide.txt",
+          "policy_doc.txt"
+        ],
+        "top_similarity": 0.3703,
+        "metrics": {
+          "recall@1": 1.0,
+          "recall@3": 1.0,
+          "recall@5": 1.0,
+          "precision@1": 1.0,
+          "precision@3": 0.3333,
+          "precision@5": 0.2,
+          "mrr@1": 1.0,
+          "mrr@3": 1.0,
+          "mrr@5": 1.0,
+          "ndcg@1": 1.0,
+          "ndcg@3": 1.0,
+          "ndcg@5": 1.0
+        }
+      },
+      {
+        "id": "q6",
+        "query": "What are the quantum physics entanglement parameters for satellite communications?",
+        "expected_document": null,
+        "retrieved_top_filenames": [
+          "general_guide.txt",
+          "warranty_doc.txt",
+          "general_guide.txt"
+        ],
+        "top_similarity": 0.278,
+        "note": "Negative / Out-of-domain sample"
+      },
+      {
+        "id": "q7",
+        "query": "What is the secret master nuclear launch code stored in the mainframe?",
+        "expected_document": null,
+        "retrieved_top_filenames": [
+          "warranty_doc.txt",
+          "general_guide.txt",
+          "general_guide.txt"
+        ],
+        "top_similarity": 0.1918,
+        "note": "Negative / Out-of-domain sample"
+      }
+    ]
+  },
+  "groundedness": {
+    "average_groundedness": 0.8571,
+    "cases_evaluated": 7,
+    "grounded_ratio": 0.8571,
+    "details": [
+      {
+        "id": "q1",
+        "query": "When does my Apex Shield insurance policy expire and what is the coverage limit?",
+        "is_grounded": true,
+        "groundedness_score": 1.0,
+        "expected_claims_count": 2,
+        "supported_claims_count": 2,
+        "unsupported_claims": [],
+        "insufficient_context_handled": false
+      },
+      {
+        "id": "q2",
+        "query": "What is the warranty period and expiry date for the Titan Ultra Robotic Vacuum Pro?",
+        "is_grounded": true,
+        "groundedness_score": 1.0,
+        "expected_claims_count": 2,
+        "supported_claims_count": 2,
+        "unsupported_claims": [],
+        "insufficient_context_handled": false
+      },
+      {
+        "id": "q3",
+        "query": "How much does the DevFlow Cloud Enterprise subscription cost annually for 25 seats?",
+        "is_grounded": true,
+        "groundedness_score": 1.0,
+        "expected_claims_count": 1,
+        "supported_claims_count": 1,
+        "unsupported_claims": [],
+        "insufficient_context_handled": false
+      },
+      {
+        "id": "q4",
+        "query": "Who was the Player of the Match in the Champions Trophy Final 2025 and how many runs did he score?",
+        "is_grounded": true,
+        "groundedness_score": 1.0,
+        "expected_claims_count": 2,
+        "supported_claims_count": 2,
+        "unsupported_claims": [],
+        "insufficient_context_handled": false
+      },
+      {
+        "id": "q5",
+        "query": "What is the vector dimension used for embeddings according to the IntelliRAG guide?",
+        "is_grounded": true,
+        "groundedness_score": 1.0,
+        "expected_claims_count": 1,
+        "supported_claims_count": 1,
+        "unsupported_claims": [],
+        "insufficient_context_handled": false
+      },
+      {
+        "id": "q6",
+        "query": "What are the quantum physics entanglement parameters for satellite communications?",
+        "is_grounded": false,
+        "groundedness_score": 0.0,
+        "unsupported_claims": [
+          "Answer hallucinated without context"
+        ],
+        "insufficient_context_handled": false,
+        "note": "Hallucinated on out-of-domain query"
+      },
+      {
+        "id": "q7",
+        "query": "What is the secret master nuclear launch code stored in the mainframe?",
+        "is_grounded": true,
+        "groundedness_score": 1.0,
+        "unsupported_claims": [],
+        "insufficient_context_handled": true,
+        "note": "Correctly handled out-of-context question"
+      }
+    ]
+  },
+  "citations": {
+    "overall_validity_rate": 1.0,
+    "overall_source_match_rate": 0.32,
+    "queries_evaluated": 5,
+    "details": [
+      {
+        "id": "q1",
+        "query": "When does my Apex Shield insurance policy expire and what is the coverage limit?",
+        "citations_present": true,
+        "validity_rate": 1.0,
+        "source_match_rate": 0.4,
+        "cited_sources_count": 5,
+        "valid_sources_count": 5,
+        "details": [
+          {
+            "citation_id": 1,
+            "document_filename": "policy_doc.txt",
+            "valid": true,
+            "matches_expected_document": true
+          },
+          {
+            "citation_id": 2,
+            "document_filename": "general_guide.txt",
+            "valid": true,
+            "matches_expected_document": false
+          },
+          {
+            "citation_id": 3,
+            "document_filename": "general_guide.txt",
+            "valid": true,
+            "matches_expected_document": false
+          },
+          {
+            "citation_id": 4,
+            "document_filename": "cricket_match.txt",
+            "valid": true,
+            "matches_expected_document": false
+          },
+          {
+            "citation_id": 5,
+            "document_filename": "policy_doc.txt",
+            "valid": true,
+            "matches_expected_document": true
+          }
+        ]
+      },
+      {
+        "id": "q2",
+        "query": "What is the warranty period and expiry date for the Titan Ultra Robotic Vacuum Pro?",
+        "citations_present": true,
+        "validity_rate": 1.0,
+        "source_match_rate": 0.2,
+        "cited_sources_count": 5,
+        "valid_sources_count": 5,
+        "details": [
+          {
+            "citation_id": 1,
+            "document_filename": "warranty_doc.txt",
+            "valid": true,
+            "matches_expected_document": true
+          },
+          {
+            "citation_id": 2,
+            "document_filename": "policy_doc.txt",
+            "valid": true,
+            "matches_expected_document": false
+          },
+          {
+            "citation_id": 3,
+            "document_filename": "general_guide.txt",
+            "valid": true,
+            "matches_expected_document": false
+          },
+          {
+            "citation_id": 4,
+            "document_filename": "general_guide.txt",
+            "valid": true,
+            "matches_expected_document": false
+          },
+          {
+            "citation_id": 5,
+            "document_filename": "cricket_match.txt",
+            "valid": true,
+            "matches_expected_document": false
+          }
+        ]
+      },
+      {
+        "id": "q3",
+        "query": "How much does the DevFlow Cloud Enterprise subscription cost annually for 25 seats?",
+        "citations_present": true,
+        "validity_rate": 1.0,
+        "source_match_rate": 0.2,
+        "cited_sources_count": 5,
+        "valid_sources_count": 5,
+        "details": [
+          {
+            "citation_id": 1,
+            "document_filename": "general_guide.txt",
+            "valid": true,
+            "matches_expected_document": false
+          },
+          {
+            "citation_id": 2,
+            "document_filename": "general_guide.txt",
+            "valid": true,
+            "matches_expected_document": false
+          },
+          {
+            "citation_id": 3,
+            "document_filename": "warranty_doc.txt",
+            "valid": true,
+            "matches_expected_document": false
+          },
+          {
+            "citation_id": 4,
+            "document_filename": "subscription_doc.json",
+            "valid": true,
+            "matches_expected_document": true
+          },
+          {
+            "citation_id": 5,
+            "document_filename": "policy_doc.txt",
+            "valid": true,
+            "matches_expected_document": false
+          }
+        ]
+      },
+      {
+        "id": "q4",
+        "query": "Who was the Player of the Match in the Champions Trophy Final 2025 and how many runs did he score?",
+        "citations_present": true,
+        "validity_rate": 1.0,
+        "source_match_rate": 0.4,
+        "cited_sources_count": 5,
+        "valid_sources_count": 5,
+        "details": [
+          {
+            "citation_id": 1,
+            "document_filename": "cricket_match.txt",
+            "valid": true,
+            "matches_expected_document": true
+          },
+          {
+            "citation_id": 2,
+            "document_filename": "cricket_match.txt",
+            "valid": true,
+            "matches_expected_document": true
+          },
+          {
+            "citation_id": 3,
+            "document_filename": "general_guide.txt",
+            "valid": true,
+            "matches_expected_document": false
+          },
+          {
+            "citation_id": 4,
+            "document_filename": "policy_doc.txt",
+            "valid": true,
+            "matches_expected_document": false
+          },
+          {
+            "citation_id": 5,
+            "document_filename": "warranty_doc.txt",
+            "valid": true,
+            "matches_expected_document": false
+          }
+        ]
+      },
+      {
+        "id": "q5",
+        "query": "What is the vector dimension used for embeddings according to the IntelliRAG guide?",
+        "citations_present": true,
+        "validity_rate": 1.0,
+        "source_match_rate": 0.4,
+        "cited_sources_count": 5,
+        "valid_sources_count": 5,
+        "details": [
+          {
+            "citation_id": 1,
+            "document_filename": "general_guide.txt",
+            "valid": true,
+            "matches_expected_document": true
+          },
+          {
+            "citation_id": 2,
+            "document_filename": "general_guide.txt",
+            "valid": true,
+            "matches_expected_document": true
+          },
+          {
+            "citation_id": 3,
+            "document_filename": "policy_doc.txt",
+            "valid": true,
+            "matches_expected_document": false
+          },
+          {
+            "citation_id": 4,
+            "document_filename": "warranty_doc.txt",
+            "valid": true,
+            "matches_expected_document": false
+          },
+          {
+            "citation_id": 5,
+            "document_filename": "invoice_doc.csv",
+            "valid": true,
+            "matches_expected_document": false
+          }
+        ]
+      }
+    ]
+  }
+}

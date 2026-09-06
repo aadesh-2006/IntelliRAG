@@ -1,0 +1,20 @@
+{
+  "document_filename": "cricket_match.txt",
+  "document_type": "CRICKET_SCORECARD",
+  "fields": {
+    "match_title": "Champions Trophy Final 2025",
+    "match_date": "2025-03-09",
+    "winner_team": "Mumbai Mavericks",
+    "player_of_match": "Rohit Sharma",
+    "top_scorer": "Rohit Sharma",
+    "top_scorer_runs": 85,
+    "top_wicket_taker": "Jasprit Bumrah",
+    "top_wicket_count": 3
+  },
+  "actionable_dates": [
+    {
+      "date": "2025-03-09",
+      "type": "EVENT_DATE"
+    }
+  ]
+}

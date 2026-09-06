@@ -1,0 +1,5 @@
+item_id,description,quantity,unit_price,total_price
+INV-001,Cloud Server Compute Nodes,4,250.00,1000.00
+INV-002,Vector Database Managed Instance,1,500.00,500.00
+INV-003,Premium Support SLA Tier 1,1,300.00,300.00
+INV-TOTAL,Total Invoice Balance,6,1800.00,1800.00

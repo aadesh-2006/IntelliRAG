@@ -1,3 +1,11 @@
+import sys
+import os
+
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+for p in (root_dir, backend_dir):
+    if p not in sys.path:
+        sys.path.insert(0, p)
 import os
 import shutil
 import tempfile

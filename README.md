@@ -31,14 +31,14 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - [x] **Module 12 — Notification System:** Multi-channel alerting (In-App notifications, Email SMTP transport, Webhook dispatching with HMAC-SHA256 signatures), idempotent event key deduplication, notification retry worker, and user preference management.
 - [x] **Module 13 — Cricket Scorecard AI:** Multimodal cricket scorecard intelligence pipeline (scorecard detection, innings and batting/bowling performance extraction, overs/balls/strike rate/economy rate normalization, domain integrity validation, player career statistics across scorecards, and deterministic factual match summary synthesis).
 - [x] **Module 14 — End-to-End Integration:** Complete cross-module integration test suite and lifecycle validation covering document upload, processing, structure-aware chunking, vector embedding, semantic retrieval, RAG answer generation, query routing (SQL/RAG/HYBRID), chat orchestration, actionable date extraction, reminder scheduling, multi-channel notifications (deduplication & retry), cricket scorecard analytics, and multi-tenant security isolation.
-- [ ] **Module 15 — Testing & AI Evaluation:** Automated evaluation suite, retrieval precision/recall benchmarks, and regression testing. *(Planned)*
+- [x] **Module 15 — Testing & AI Evaluation:** Dedicated AI evaluation framework and benchmark dataset measuring document extraction accuracy (exact & normalized field accuracy), RAG retrieval quality (Recall@K, Precision@K, MRR@K, NDCG@K for K=1,3,5), RAG groundedness/faithfulness (substantiated claims, out-of-domain rejection), and citation correctness (validity rate, source-match rate) with deterministic JSON & Markdown report generation.
 - [ ] **Module 16 — Deployment & Final Polish:** Production containerization, CI/CD pipelines, rate limiting, and observability telemetry. *(Planned)*
 
 ---
 
 ## Tech Stack
 
-### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 & 14)
+### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 & 15)
 - **Intelligent Query Router & Analytics Engine:** Query intent classification heuristics, natural date parser (UTC normalized), safe parameterized SQLAlchemy ORM aggregations (zero arbitrary raw SQL), strict user isolation, Gemini/LLM explanation of authoritative database facts, RAG retrieval routing, and hybrid structured + vector answer synthesizer
 - **Backend:** Python 3.13+, FastAPI, Uvicorn, Pydantic v2, Pydantic Settings, HTTPX, Pytest
 - **Authentication & Security:** PyJWT, bcrypt, OAuth2 Password Bearer flow
@@ -51,6 +51,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - **Conversational Chat:** Multi-turn conversation sessions, bounded message context window, citation sources, retrieval grounding signals
 - **Reminder Engine & Date Intelligence:** Context-aware date extraction regex engine, table cell mapping, warranty/expiry/renewal tracking, lead-time delta computation, due state transitions
 - **Notification Delivery Engine:** Multi-channel notification pipeline (In-App, Email/SMTP, HMAC-signed Webhooks), user preference routing, retry queue, unread counters
+- **AI Evaluation & Quality Framework:** Dedicated evaluation framework with deterministic test fixtures, ground-truth extraction annotations, golden RAG QA pairs, exact/normalized field accuracy evaluation, ranking metrics (Recall@K, Precision@K, MRR@K, NDCG@K), groundedness and faithfulness verification, citation validity/source-match scoring, and CLI/JSON/Markdown report generation
 - **End-to-End Integration & Security Isolation:** Comprehensive cross-module integration test suite (27 scenarios) validating full document lifecycles (`UPLOADED` -> `PROCESSING` -> `PROCESSED` -> `READY`), error handling/idempotency, prompt injection & SQL injection rejection, notification deduplication & retry, cricket analytics pipelines, and multi-tenant user isolation across all entities
 - **Cricket Scorecard Intelligence:** Specialized scorecard layout detection, innings and batting/bowling statistics extraction, overs/balls/strike rate/economy rate normalization, domain integrity validation, multi-match career statistics aggregation, and deterministic factual match summary synthesis
 - **Database & Vectors:** PostgreSQL, SQLAlchemy 2.x, Alembic, psycopg 3 (binary), pgvector
@@ -201,6 +202,7 @@ IntelliRAG/
 │   │   ├── test_database.py
 │   │   ├── test_documents.py
 │   │   ├── test_e2e_integration.py
+│   │   ├── test_evaluation_framework.py
 │   │   ├── test_health.py
 │   │   ├── test_notifications.py
 │   │   ├── test_processing.py
@@ -208,6 +210,25 @@ IntelliRAG/
 │   │   ├── test_rag.py
 │   │   ├── test_reminders.py
 │   │   └── test_retrieval.py
+├── evaluation/
+│   ├── datasets/
+│   │   ├── documents/
+│   │   ├── extraction_ground_truth/
+│   │   └── rag_questions/
+│   ├── evaluators/
+│   │   ├── citation_evaluator.py
+│   │   ├── extraction_evaluator.py
+│   │   ├── groundedness_evaluator.py
+│   │   └── retrieval_evaluator.py
+│   ├── metrics/
+│   │   ├── normalizers.py
+│   │   ├── ranking_metrics.py
+│   │   └── score_calculators.py
+│   ├── results/
+│   │   ├── latest_report.md
+│   │   └── latest_results.json
+│   ├── run.py
+│   └── runner.py
 │   ├── .env.example
 │   ├── alembic.ini
 │   ├── Dockerfile
@@ -437,6 +458,27 @@ docker-compose up -d db
 - **`GET /api/cricket/documents/{document_id}/statistics`**: Compute top scorers, top wicket takers, highest strike rates, best economy rates, and team comparisons (`Authorization: Bearer <token>` required).
 - **`GET /api/cricket/documents/{document_id}/summary`**: Generate factual natural-language match summary synthesized directly from structured match data (`Authorization: Bearer <token>` required).
 - **`GET /api/cricket/players/{player_name}/statistics`**: Retrieve aggregated career batting and bowling performance metrics across all user scorecards (`Authorization: Bearer <token>` required).
+
+### Running the AI Evaluation Suite
+The dedicated AI evaluation framework measures the performance of IntelliRAG's extraction, retrieval, groundedness, and citation systems:
+
+```bash
+# Run the complete AI evaluation suite and print the Markdown summary
+python -m evaluation.run --all
+
+# Run specific evaluation components
+python -m evaluation.run --extraction
+python -m evaluation.run --retrieval
+python -m evaluation.run --groundedness
+python -m evaluation.run --citations
+
+# Output machine-readable JSON results
+python -m evaluation.run --all --json
+```
+
+Evaluation artifacts and benchmarks are automatically written to:
+- **JSON Results:** `evaluation/results/latest_results.json`
+- **Markdown Report:** `evaluation/results/latest_report.md`
 
 ### Interactive API Documentation
 - **Swagger UI:** `http://localhost:8000/api/docs`
