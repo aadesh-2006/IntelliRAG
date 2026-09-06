@@ -10,11 +10,12 @@ import { DocumentList } from './components/DocumentList'
 import { SemanticSearchCard } from './components/SemanticSearchCard'
 import { RAGQueryCard } from './components/RAGQueryCard'
 import { DashboardOverview } from './components/DashboardOverview'
+import { ChatInterface } from './components/ChatInterface'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { checkBackendHealth, HealthStatus } from './api/health'
-import { ShieldCheck, UserCheck, Lock, LayoutDashboard, Files, Bot, Search, Layers } from 'lucide-react'
+import { ShieldCheck, UserCheck, Lock, LayoutDashboard, Files, MessageSquare, Bot, Search, Layers } from 'lucide-react'
 
-type TabType = 'dashboard' | 'documents' | 'rag' | 'search' | 'roadmap'
+type TabType = 'dashboard' | 'documents' | 'chat' | 'rag' | 'search' | 'roadmap'
 
 export const AppContent: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth()
@@ -139,6 +140,19 @@ export const AppContent: React.FC = () => {
 
               <button
                 type="button"
+                onClick={() => setActiveTab('chat')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                  activeTab === 'chat'
+                    ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/20'
+                    : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                }`}
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>Assistant Chat</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setActiveTab('rag')}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
                   activeTab === 'rag'
@@ -147,7 +161,7 @@ export const AppContent: React.FC = () => {
                 }`}
               >
                 <Bot className="w-4 h-4" />
-                <span>RAG Q&amp;A</span>
+                <span>RAG Query</span>
               </button>
 
               <button
@@ -188,6 +202,12 @@ export const AppContent: React.FC = () => {
               <div className="space-y-8 animate-fade-in">
                 <DocumentUploadCard onUploadSuccess={handleUploadSuccess} />
                 <DocumentList refreshTrigger={refreshTrigger} />
+              </div>
+            )}
+
+            {activeTab === 'chat' && (
+              <div className="animate-fade-in">
+                <ChatInterface refreshTrigger={refreshTrigger} />
               </div>
             )}
 

@@ -22,7 +22,7 @@ import { DocumentInspectionModal } from './DocumentInspectionModal'
 import { DocumentChunksModal } from './DocumentChunksModal'
 
 interface DashboardOverviewProps {
-  onNavigateTab: (tab: 'dashboard' | 'documents' | 'rag' | 'search' | 'roadmap') => void
+  onNavigateTab: (tab: 'dashboard' | 'documents' | 'chat' | 'rag' | 'search' | 'roadmap') => void
   refreshTrigger?: number
 }
 
@@ -322,16 +322,16 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
             <div className="space-y-3">
               <button
                 type="button"
-                onClick={() => onNavigateTab('rag')}
+                onClick={() => onNavigateTab('chat')}
                 className="w-full text-left p-3 rounded-xl bg-indigo-950/20 hover:bg-indigo-950/40 border border-indigo-900/40 hover:border-indigo-700/60 transition-all flex items-center justify-between group"
               >
                 <div>
                   <div className="text-xs font-bold text-white flex items-center gap-1.5">
                     <Bot className="w-3.5 h-3.5 text-indigo-400" />
-                    Ask RAG Question
+                    Document Assistant Chat
                   </div>
                   <p className="text-[11px] text-slate-400 mt-0.5">
-                    Generate cited answers across ready documents
+                    Multi-turn grounded conversation with citations
                   </p>
                 </div>
                 <ArrowRight className="w-4 h-4 text-indigo-400 group-hover:translate-x-1 transition-transform" />

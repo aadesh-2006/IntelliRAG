@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List, Dict
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from app.models.user import User
@@ -23,7 +23,8 @@ class RAGService:
         self,
         db: Session,
         user: User,
-        request: RAGQueryRequest
+        request: RAGQueryRequest,
+        history: Optional[List[Dict[str, str]]] = None
     ) -> RAGQueryResponse:
         cleaned_query = request.query.strip()
         if not cleaned_query:
@@ -73,7 +74,11 @@ class RAGService:
                 model_info=model_info
             )
 
-        user_prompt = self.prompt_service.build_user_prompt(cleaned_query, context_text)
+        user_prompt = self.prompt_service.build_user_prompt(
+            query=cleaned_query,
+            context_text=context_text,
+            history=history
+        )
 
         generated_answer = self.llm_service.generate(
             system_prompt=self.prompt_service.SYSTEM_PROMPT,

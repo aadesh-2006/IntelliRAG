@@ -8,6 +8,7 @@ from app.db.base import Base
 
 if TYPE_CHECKING:
     from app.models.document import Document
+    from app.models.conversation import Conversation
 
 class User(Base):
     __tablename__ = "users"
@@ -41,6 +42,11 @@ class User(Base):
 
     documents: Mapped[List["Document"]] = relationship(
         "Document",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    conversations: Mapped[List["Conversation"]] = relationship(
+        "Conversation",
         back_populates="user",
         cascade="all, delete-orphan"
     )

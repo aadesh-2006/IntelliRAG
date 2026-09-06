@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Optional, Dict
 from app.config import settings
 from app.schemas.retrieval import RetrievedChunk
 from app.schemas.rag import Citation
@@ -66,11 +66,32 @@ class PromptService:
         formatted_context = "\n".join(context_blocks).strip()
         return formatted_context, citations
 
-    def build_user_prompt(self, query: str, context_text: str) -> str:
+    def build_user_prompt(
+        self,
+        query: str,
+        context_text: str,
+        history: Optional[List[Dict[str, str]]] = None
+    ) -> str:
+        history_section = ""
+        if history:
+            history_blocks = []
+            for item in history:
+                role_label = "User" if item.get("role") == "user" else "Assistant"
+                content_text = item.get("content", "").strip()
+                if content_text:
+                    history_blocks.append(f"{role_label}: {content_text}")
+            if history_blocks:
+                history_section = (
+                    f"=== RECENT CONVERSATION CONTEXT ===\n"
+                    f"{chr(10).join(history_blocks)}\n"
+                    f"=== END CONVERSATION CONTEXT ===\n\n"
+                )
+
         return (
             f"=== RETRIEVED DOCUMENT CONTEXT ===\n"
             f"{context_text}\n"
             f"=== END DOCUMENT CONTEXT ===\n\n"
+            f"{history_section}"
             f"User Query: {query}\n\n"
             f"Please provide a well-grounded, clear answer referencing relevant sources."
         )

@@ -16,6 +16,15 @@ from app.schemas.chunk import ChunkResponse, ChunkListResponse, EmbedTriggerResp
 from app.schemas.retrieval import SearchQueryRequest, RetrievedChunk, SearchQueryResponse
 from app.schemas.rag import Citation, RAGQueryRequest, RAGQueryResponse
 from app.schemas.dashboard import DashboardStatsResponse
+from app.schemas.conversation import (
+    ConversationCreateRequest,
+    ConversationUpdateRequest,
+    ConversationResponse,
+    ConversationDetailResponse,
+    ConversationMessageResponse,
+    SendMessageRequest,
+    SendMessageResponse,
+)
 
 __all__ = [
     "HealthResponse",
@@ -44,4 +53,11 @@ __all__ = [
     "RAGQueryRequest",
     "RAGQueryResponse",
     "DashboardStatsResponse",
+    "ConversationCreateRequest",
+    "ConversationUpdateRequest",
+    "ConversationResponse",
+    "ConversationDetailResponse",
+    "ConversationMessageResponse",
+    "SendMessageRequest",
+    "SendMessageResponse",
 ]

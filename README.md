@@ -26,9 +26,9 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - [x] **Module 7 — Retrieval & Semantic Search:** pgvector cosine similarity search, query vector generation, distance/similarity scoring, top_k ranking, similarity threshold filtering, metadata & document-type scoping, and interactive frontend semantic query workspace.
 - [x] **Module 8 — RAG Answer Generation:** Complete grounded question-answering pipeline, prompt construction with untrusted-data boundary separation, replaceable LLM provider abstraction (Google Gemini / deterministic Mock), structured source citations, and interactive RAG workspace.
 - [x] **Module 9 — Dashboard:** Interactive operational dashboard overview, summary KPIs (total documents, ready, processing/embedding, failed, total chunks, storage footprint), document lifecycle monitoring, type distributions, recent document ingestions, and direct modal inspection workflows.
-- [ ] **Module 10 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
-- [ ] **Module 11 — AI Analytics:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
-- [ ] **Module 12 — Chat Interface:** Conversational document assistant, citation tracking, and groundedness visualizer. *(Planned)*
+- [x] **Module 10 — Conversational Chat Interface:** Persistent multi-turn conversations, bounded conversational context management, user-isolated chat message history, source citation tracking, and retrieval grounding signal visualizations.
+- [ ] **Module 11 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
+- [ ] **Module 12 — AI Analytics:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
 - [ ] **Module 13 — Reminder Engine:** Actionable date detection, scheduled alerts, warranty/expiry tracking, and automated reminders. *(Planned)*
 - [ ] **Module 14 — Notification System:** Multi-channel alerting (email, in-app, webhooks) for document events and query alerts. *(Planned)*
 - [ ] **Module 15 — Cricket Scorecard AI:** Specialized multimodal extraction engine for cricket scorecards, player statistics, and match summaries. *(Planned)*
@@ -40,7 +40,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 
 ## Tech Stack
 
-### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8 & 9)
+### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8, 9 & 10)
 - **Backend:** Python 3.13+, FastAPI, Uvicorn, Pydantic v2, Pydantic Settings, HTTPX, Pytest
 - **Authentication & Security:** PyJWT, bcrypt, OAuth2 Password Bearer flow
 - **Storage & File Management:** Chunked streaming file storage, UUID-isolated paths, extension & size validation
@@ -49,6 +49,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - **Semantic Search & Retrieval:** pgvector cosine distance `<=>`, top_k ranking, similarity threshold filtering, multi-tenant document isolation
 - **RAG & Answer Synthesis:** Grounded prompt builder, citation mapping, replaceable LLM abstraction (Google Gemini API / Mock), zero-context hallucination guardrails
 - **Dashboard & Operations:** Real-time multi-tenant KPI aggregations, lifecycle state breakdowns, document classification distribution metrics
+- **Conversational Chat:** Multi-turn conversation sessions, bounded message context window, citation sources, retrieval grounding signals
 - **Database & Vectors:** PostgreSQL, SQLAlchemy 2.x, Alembic, psycopg 3 (binary), pgvector
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React
 - **DevOps:** Docker, Docker Compose (pgvector/pgvector:pg17)
@@ -69,7 +70,8 @@ IntelliRAG/
 │   │   │   ├── 001_initial_schema.py
 │   │   │   ├── 002_add_user_password_hash.py
 │   │   │   ├── 003_add_document_processing_fields.py
-│   │   │   └── 004_add_vector_indexes.py
+│   │   │   ├── 004_add_vector_indexes.py
+│   │   │   └── 005_add_conversation_models.py
 │   │   ├── env.py
 │   │   └── script.py.mako
 │   ├── app/
@@ -77,6 +79,7 @@ IntelliRAG/
 │   │   │   ├── endpoints/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── auth.py
+│   │   │   │   ├── conversations.py
 │   │   │   │   ├── dashboard.py
 │   │   │   │   ├── documents.py
 │   │   │   │   ├── health.py
@@ -94,6 +97,7 @@ IntelliRAG/
 │   │   │   └── session.py
 │   │   ├── models/
 │   │   │   ├── __init__.py
+│   │   │   ├── conversation.py
 │   │   │   ├── document.py
 │   │   │   ├── document_chunk.py
 │   │   │   └── user.py
@@ -101,6 +105,7 @@ IntelliRAG/
 │   │   │   ├── __init__.py
 │   │   │   ├── auth.py
 │   │   │   ├── chunk.py
+│   │   │   ├── conversation.py
 │   │   │   ├── dashboard.py
 │   │   │   ├── document.py
 │   │   │   ├── health.py
@@ -120,6 +125,7 @@ IntelliRAG/
 │   │   │   ├── __init__.py
 │   │   │   ├── auth_service.py
 │   │   │   ├── chunking_service.py
+│   │   │   ├── conversation_service.py
 │   │   │   ├── dashboard_service.py
 │   │   │   ├── document_chunk_service.py
 │   │   │   ├── document_service.py
@@ -137,6 +143,7 @@ IntelliRAG/
 │   │   ├── conftest.py
 │   │   ├── test_auth.py
 │   │   ├── test_chunking_embeddings.py
+│   │   ├── test_conversations.py
 │   │   ├── test_dashboard.py
 │   │   ├── test_database.py
 │   │   ├── test_documents.py
@@ -156,6 +163,7 @@ IntelliRAG/
 │   │   │   ├── auth.ts
 │   │   │   ├── authStorage.ts
 │   │   │   ├── client.ts
+│   │   │   ├── conversations.ts
 │   │   │   ├── dashboard.ts
 │   │   │   ├── documents.ts
 │   │   │   ├── health.ts
@@ -165,6 +173,7 @@ IntelliRAG/
 │   │   │   ├── ArchitectureOverview.tsx
 │   │   │   ├── AuthCard.tsx
 │   │   │   ├── AuthModal.tsx
+│   │   │   ├── ChatInterface.tsx
 │   │   │   ├── DashboardOverview.tsx
 │   │   │   ├── DocumentChunksModal.tsx
 │   │   │   ├── DocumentInspectionModal.tsx
@@ -322,6 +331,13 @@ docker-compose up -d db
 
 ### Dashboard & Operational Endpoints
 - **`GET /api/dashboard/stats`**: Retrieve authenticated user's workspace statistics, KPI counters, lifecycle breakdown, type distributions, storage usage, and recent document ingestions (`Authorization: Bearer <token>` required).
+
+### Conversational Chat Endpoints
+- **`POST /api/conversations`**: Create a new conversation session (`Authorization: Bearer <token>` required).
+- **`GET /api/conversations`**: List user's conversation sessions ordered by last update (`Authorization: Bearer <token>` required).
+- **`GET /api/conversations/{conversation_id}`**: Retrieve conversation thread with complete message history, citations, and grounding metadata (`Authorization: Bearer <token>` required).
+- **`DELETE /api/conversations/{conversation_id}`**: Delete a conversation session and all associated messages (`Authorization: Bearer <token>` required).
+- **`POST /api/conversations/{conversation_id}/messages`**: Post a user message, trigger bounded context RAG retrieval & answer generation, persist citations and grounding signals, and return the response (`Authorization: Bearer <token>` required).
 
 ### Interactive API Documentation
 - **Swagger UI:** `http://localhost:8000/api/docs`

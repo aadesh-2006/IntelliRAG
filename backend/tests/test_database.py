@@ -10,6 +10,7 @@ from app.db.session import get_db, SessionLocal
 from app.models.user import User
 from app.models.document import Document
 from app.models.document_chunk import DocumentChunk
+from app.models.conversation import Conversation, ConversationMessage
 
 def test_settings_database_configuration():
     assert settings.DATABASE_URL is not None
@@ -23,6 +24,8 @@ def test_models_metadata_registration():
     assert "users" in table_names
     assert "documents" in table_names
     assert "document_chunks" in table_names
+    assert "conversations" in table_names
+    assert "conversation_messages" in table_names
 
 def test_user_model_instantiation():
     user = User(
@@ -32,6 +35,7 @@ def test_user_model_instantiation():
     assert user.email == "test@intellirag.ai"
     assert user.password_hash == "hashed_secret_string"
     assert hasattr(user, "documents")
+    assert hasattr(user, "conversations")
 
 def test_document_model_instantiation():
     user_id = uuid.uuid4()
@@ -67,6 +71,34 @@ def test_document_chunk_model_instantiation():
     assert hasattr(chunk, "document")
     assert hasattr(chunk, "embedding")
 
+def test_conversation_model_instantiation():
+    user_id = uuid.uuid4()
+    conv = Conversation(
+        user_id=user_id,
+        title="Q3 Strategy Analysis"
+    )
+    assert conv.user_id == user_id
+    assert conv.title == "Q3 Strategy Analysis"
+    assert hasattr(conv, "user")
+    assert hasattr(conv, "messages")
+
+def test_conversation_message_model_instantiation():
+    conv_id = uuid.uuid4()
+    msg = ConversationMessage(
+        conversation_id=conv_id,
+        role="assistant",
+        content="Grounding confirmed in Q3 report.",
+        citations=[{"citation_id": 1, "document_filename": "Q3.pdf"}],
+        grounding_metadata={"retrieved_sources": 1, "highest_similarity": 0.88},
+        is_sufficient_context=True
+    )
+    assert msg.conversation_id == conv_id
+    assert msg.role == "assistant"
+    assert msg.content == "Grounding confirmed in Q3 report."
+    assert msg.is_sufficient_context is True
+    assert msg.citations == [{"citation_id": 1, "document_filename": "Q3.pdf"}]
+    assert hasattr(msg, "conversation")
+
 def test_get_db_generator():
     db_gen = get_db()
     db_session = next(db_gen)
@@ -83,6 +115,6 @@ def test_alembic_configuration():
     alembic_cfg.set_main_option("script_location", os.path.join(base_dir, "alembic"))
     script = ScriptDirectory.from_config(alembic_cfg)
     revisions = list(script.walk_revisions())
-    assert len(revisions) >= 4
+    assert len(revisions) >= 5
     head_rev = revisions[0]
-    assert head_rev.revision == "004_add_vector_indexes"
+    assert head_rev.revision == "005_add_conversation_models"

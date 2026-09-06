@@ -17,6 +17,7 @@ from app.services.prompt_service import PromptService, prompt_service
 from app.services.llm_service import BaseLLMService, MockLLMService, GeminiLLMService, llm_service
 from app.services.rag_service import RAGService, rag_service
 from app.services.dashboard_service import DashboardService, dashboard_service
+from app.services.conversation_service import ConversationService, conversation_service
 
 __all__ = [
     "get_user_by_email",
@@ -52,4 +53,6 @@ __all__ = [
     "rag_service",
     "DashboardService",
     "dashboard_service",
+    "ConversationService",
+    "conversation_service",
 ]
