@@ -28,7 +28,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - [x] **Module 9 — Dashboard:** Interactive operational dashboard overview, summary KPIs (total documents, ready, processing/embedding, failed, total chunks, storage footprint), document lifecycle monitoring, type distributions, recent document ingestions, and direct modal inspection workflows.
 - [x] **Module 10 — Conversational Chat Interface:** Persistent multi-turn conversations, bounded conversational context management, user-isolated chat message history, source citation tracking, and retrieval grounding signal visualizations.
 - [x] **Module 11 — Reminder Engine:** Production-grade reminder engine, context-aware actionable date extraction (warranties, expiries, renewals, payment due dates, deadlines), lead-time alert calculations, document date scanner, and complete CRUD reminder tracking workspace.
-- [ ] **Module 12 — Notification System:** Multi-channel alerting (email, in-app, webhooks) for document events and query alerts. *(Planned)*
+- [x] **Module 12 — Notification System:** Multi-channel alerting (In-App notifications, Email SMTP transport, Webhook dispatching with HMAC-SHA256 signatures), idempotent event key deduplication, notification retry worker, and user preference management.
 - [ ] **Module 13 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
 - [ ] **Module 14 — AI Analytics:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
 - [ ] **Module 15 — Cricket Scorecard AI:** Specialized multimodal extraction engine for cricket scorecards, player statistics, and match summaries. *(Planned)*
@@ -40,7 +40,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 
 ## Tech Stack
 
-### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 & 11)
+### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 & 12)
 - **Backend:** Python 3.13+, FastAPI, Uvicorn, Pydantic v2, Pydantic Settings, HTTPX, Pytest
 - **Authentication & Security:** PyJWT, bcrypt, OAuth2 Password Bearer flow
 - **Storage & File Management:** Chunked streaming file storage, UUID-isolated paths, extension & size validation
@@ -51,6 +51,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - **Dashboard & Operations:** Real-time multi-tenant KPI aggregations, lifecycle state breakdowns, document classification distribution metrics
 - **Conversational Chat:** Multi-turn conversation sessions, bounded message context window, citation sources, retrieval grounding signals
 - **Reminder Engine & Date Intelligence:** Context-aware date extraction regex engine, table cell mapping, warranty/expiry/renewal tracking, lead-time delta computation, due state transitions
+- **Notification Delivery Engine:** Multi-channel notification pipeline (In-App, Email/SMTP, HMAC-signed Webhooks), user preference routing, retry queue, unread counters
 - **Database & Vectors:** PostgreSQL, SQLAlchemy 2.x, Alembic, psycopg 3 (binary), pgvector
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React
 - **DevOps:** Docker, Docker Compose (pgvector/pgvector:pg17)
@@ -73,7 +74,8 @@ IntelliRAG/
 │   │   │   ├── 003_add_document_processing_fields.py
 │   │   │   ├── 004_add_vector_indexes.py
 │   │   │   ├── 005_add_conversation_models.py
-│   │   │   └── 006_add_reminder_models.py
+│   │   │   ├── 006_add_reminder_models.py
+│   │   │   └── 007_add_notification_models.py
 │   │   ├── env.py
 │   │   └── script.py.mako
 │   ├── app/
@@ -85,6 +87,8 @@ IntelliRAG/
 │   │   │   │   ├── dashboard.py
 │   │   │   │   ├── documents.py
 │   │   │   │   ├── health.py
+│   │   │   │   ├── notification_preferences.py
+│   │   │   │   ├── notifications.py
 │   │   │   │   ├── rag.py
 │   │   │   │   ├── reminders.py
 │   │   │   │   └── retrieval.py
@@ -103,6 +107,7 @@ IntelliRAG/
 │   │   │   ├── conversation.py
 │   │   │   ├── document.py
 │   │   │   ├── document_chunk.py
+│   │   │   ├── notification.py
 │   │   │   ├── reminder.py
 │   │   │   └── user.py
 │   │   ├── schemas/
@@ -113,6 +118,7 @@ IntelliRAG/
 │   │   │   ├── dashboard.py
 │   │   │   ├── document.py
 │   │   │   ├── health.py
+│   │   │   ├── notification.py
 │   │   │   ├── processing.py
 │   │   │   ├── rag.py
 │   │   │   ├── reminder.py
@@ -127,6 +133,12 @@ IntelliRAG/
 │   │   │   │   ├── pdf_processor.py
 │   │   │   │   ├── pipeline.py
 │   │   │   │   └── text_processor.py
+│   │   │   ├── notifications/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── base.py
+│   │   │   │   ├── email_channel.py
+│   │   │   │   ├── in_app_channel.py
+│   │   │   │   └── webhook_channel.py
 │   │   │   ├── __init__.py
 │   │   │   ├── auth_service.py
 │   │   │   ├── chunking_service.py
@@ -137,6 +149,7 @@ IntelliRAG/
 │   │   │   ├── document_service.py
 │   │   │   ├── embedding_service.py
 │   │   │   ├── llm_service.py
+│   │   │   ├── notification_service.py
 │   │   │   ├── prompt_service.py
 │   │   │   ├── rag_service.py
 │   │   │   ├── reminder_service.py
@@ -155,6 +168,7 @@ IntelliRAG/
 │   │   ├── test_database.py
 │   │   ├── test_documents.py
 │   │   ├── test_health.py
+│   │   ├── test_notifications.py
 │   │   ├── test_processing.py
 │   │   ├── test_rag.py
 │   │   ├── test_reminders.py
@@ -175,6 +189,7 @@ IntelliRAG/
 │   │   │   ├── dashboard.ts
 │   │   │   ├── documents.ts
 │   │   │   ├── health.ts
+│   │   │   ├── notifications.ts
 │   │   │   ├── rag.ts
 │   │   │   ├── reminders.ts
 │   │   │   └── retrieval.ts
@@ -191,6 +206,8 @@ IntelliRAG/
 │   │   │   ├── Footer.tsx
 │   │   │   ├── Header.tsx
 │   │   │   ├── HeroSection.tsx
+│   │   │   ├── NotificationPanel.tsx
+│   │   │   ├── NotificationSettingsModal.tsx
 │   │   │   ├── RAGQueryCard.tsx
 │   │   │   ├── RemindersOverview.tsx
 │   │   │   ├── SemanticSearchCard.tsx
@@ -358,7 +375,15 @@ docker-compose up -d db
 - **`GET /api/conversations`**: List user's conversation sessions ordered by last update (`Authorization: Bearer <token>` required).
 - **`GET /api/conversations/{conversation_id}`**: Retrieve conversation thread with complete message history, citations, and grounding metadata (`Authorization: Bearer <token>` required).
 - **`DELETE /api/conversations/{conversation_id}`**: Delete a conversation session and all associated messages (`Authorization: Bearer <token>` required).
-- **`POST /api/conversations/{conversation_id}/messages`**: Post a user message, trigger bounded context RAG retrieval & answer generation, persist citations and grounding signals, and return the response (`Authorization: Bearer <token>` required).
+### Multi-Channel Notifications & Alerting Endpoints
+- **`GET /api/notifications`**: List user's notifications with unread, event type, severity, and channel filters (`Authorization: Bearer <token>` required).
+- **`GET /api/notifications/unread-count`**: Get real-time unread notification badge counter (`Authorization: Bearer <token>` required).
+- **`PATCH /api/notifications/{notification_id}/read`**: Mark specific notification as read (`Authorization: Bearer <token>` required).
+- **`POST /api/notifications/mark-all-read`**: Mark all user notifications as read in bulk (`Authorization: Bearer <token>` required).
+- **`DELETE /api/notifications/{notification_id}`**: Delete a notification record (`Authorization: Bearer <token>` required).
+- **`POST /api/notifications/process-pending`**: Retry failed/pending background notification deliveries (`Authorization: Bearer <token>` required).
+- **`GET /api/notification-preferences`**: Retrieve delivery channel settings, email address, webhook URL, and event filters (`Authorization: Bearer <token>` required).
+- **`PATCH /api/notification-preferences`**: Update delivery channel toggles, webhook destination & secret, and event category subscriptions (`Authorization: Bearer <token>` required).
 
 ### Interactive API Documentation
 - **Swagger UI:** `http://localhost:8000/api/docs`

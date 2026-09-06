@@ -9,6 +9,7 @@ from app.models.document import Document
 from app.models.user import User
 from app.services.storage_service import storage_service
 from app.services.document_processing.pipeline import document_pipeline
+from app.services.notification_service import notification_service
 from app.config import settings
 
 def validate_file_extension(filename: str) -> None:
@@ -45,6 +46,21 @@ def create_document(
     db.add(document)
     db.commit()
     db.refresh(document)
+
+    try:
+        notification_service.create_notification(
+            db=db,
+            user_id=user.id,
+            notification_type="DOCUMENT_UPLOADED",
+            title="Document Uploaded",
+            message=f"Document uploaded: {original_filename}",
+            severity="INFO",
+            related_document_id=document.id,
+            event_key=f"doc_uploaded_{document.id}"
+        )
+    except Exception:
+        pass
+
     return document
 
 def list_documents(
@@ -112,6 +128,21 @@ def process_document_by_id(
         document.extracted_metadata = extracted.model_dump(mode="json")
         db.commit()
         db.refresh(document)
+
+        try:
+            notification_service.create_notification(
+                db=db,
+                user_id=user_id,
+                notification_type="DOCUMENT_PROCESSED",
+                title="Document Processed",
+                message=f"Document processed successfully: {document.original_filename}",
+                severity="SUCCESS",
+                related_document_id=document.id,
+                event_key=f"doc_processed_{document.id}"
+            )
+        except Exception:
+            pass
+
         return document
     except Exception as exc:
         document.status = "FAILED"
@@ -119,6 +150,21 @@ def process_document_by_id(
         document.processing_error = str(exc)
         db.commit()
         db.refresh(document)
+
+        try:
+            notification_service.create_notification(
+                db=db,
+                user_id=user_id,
+                notification_type="DOCUMENT_FAILED",
+                title="Document Processing Failed",
+                message=f"Document processing failed: {document.original_filename}",
+                severity="ERROR",
+                related_document_id=document.id,
+                event_key=f"doc_failed_{document.id}"
+            )
+        except Exception:
+            pass
+
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Document processing failed: {str(exc)}"

@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import List, TYPE_CHECKING
+from typing import List, Optional, TYPE_CHECKING
 from sqlalchemy import String, DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from app.models.document import Document
     from app.models.conversation import Conversation
     from app.models.reminder import Reminder
+    from app.models.notification import Notification, NotificationPreference
 
 class User(Base):
     __tablename__ = "users"
@@ -54,5 +55,16 @@ class User(Base):
     reminders: Mapped[List["Reminder"]] = relationship(
         "Reminder",
         back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    notifications: Mapped[List["Notification"]] = relationship(
+        "Notification",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    notification_preference: Mapped[Optional["NotificationPreference"]] = relationship(
+        "NotificationPreference",
+        back_populates="user",
+        uselist=False,
         cascade="all, delete-orphan"
     )

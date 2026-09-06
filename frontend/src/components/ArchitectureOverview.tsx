@@ -1,5 +1,5 @@
 import React from 'react'
-import { Layout, Database, KeyRound, FolderGit2, ScanText, Layers, GitFork, Check, Clock } from 'lucide-react'
+import { Layout, Database, KeyRound, FolderGit2, ScanText, Layers, GitFork, Check } from 'lucide-react'
 
 export const ArchitectureOverview: React.FC = () => {
   return (
@@ -166,18 +166,18 @@ export const ArchitectureOverview: React.FC = () => {
           <p className="text-xs text-slate-400 mt-1">Context-aware date extraction, warranty/expiry tracking, renewal alerts, lead-time scheduling, and document date scanning.</p>
         </div>
 
-        <div className="border border-slate-800 bg-slate-950/50 rounded-xl p-4">
+        <div className="border border-indigo-500/40 bg-indigo-950/20 rounded-xl p-4 relative overflow-hidden">
           <div className="flex items-center justify-between mb-3">
-            <div className="p-2 rounded-lg bg-slate-800 text-slate-400">
-              <Clock className="w-3 h-3" />
+            <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-400">
+              <Check className="w-5 h-5" />
             </div>
-            <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-400">
-              <Clock className="w-3 h-3" />
-              <span>Module 12 Planned</span>
+            <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <Check className="w-3 h-3" />
+              <span>Module 12 Completed</span>
             </span>
           </div>
-          <h4 className="text-sm font-bold text-slate-300">Notification System</h4>
-          <p className="text-xs text-slate-500 mt-1">Multi-channel alert delivery, email dispatch, webhook notifications, and user delivery preferences.</p>
+          <h4 className="text-sm font-bold text-slate-100">Notification System</h4>
+          <p className="text-xs text-slate-400 mt-1">Multi-channel alert delivery (In-App, Email, Webhooks), idempotent event dispatching, retry worker, and user preference management.</p>
         </div>
       </div>
     </div>

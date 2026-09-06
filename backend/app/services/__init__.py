@@ -20,6 +20,7 @@ from app.services.dashboard_service import DashboardService, dashboard_service
 from app.services.conversation_service import ConversationService, conversation_service
 from app.services.date_extractor import ActionableDateExtractor, date_extractor
 from app.services.reminder_service import ReminderService, reminder_service
+from app.services.notification_service import NotificationService, notification_service
 
 __all__ = [
     "get_user_by_email",
@@ -61,4 +62,6 @@ __all__ = [
     "date_extractor",
     "ReminderService",
     "reminder_service",
+    "NotificationService",
+    "notification_service",
 ]

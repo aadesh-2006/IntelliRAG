@@ -12,6 +12,7 @@ from app.models.document import Document
 from app.models.document_chunk import DocumentChunk
 from app.models.conversation import Conversation, ConversationMessage
 from app.models.reminder import Reminder
+from app.models.notification import Notification, NotificationPreference
 
 def test_settings_database_configuration():
     assert settings.DATABASE_URL is not None
@@ -28,6 +29,8 @@ def test_models_metadata_registration():
     assert "conversations" in table_names
     assert "conversation_messages" in table_names
     assert "reminders" in table_names
+    assert "notifications" in table_names
+    assert "notification_preferences" in table_names
 
 def test_user_model_instantiation():
     user = User(
@@ -39,6 +42,8 @@ def test_user_model_instantiation():
     assert hasattr(user, "documents")
     assert hasattr(user, "conversations")
     assert hasattr(user, "reminders")
+    assert hasattr(user, "notifications")
+    assert hasattr(user, "notification_preference")
 
 def test_document_model_instantiation():
     user_id = uuid.uuid4()
@@ -97,6 +102,39 @@ def test_reminder_model_instantiation():
     assert hasattr(rem, "user")
     assert hasattr(rem, "document")
 
+def test_notification_model_instantiation():
+    user_id = uuid.uuid4()
+    notif = Notification(
+        user_id=user_id,
+        notification_type="DOCUMENT_PROCESSED",
+        title="Doc Processed",
+        message="Document processing succeeded",
+        channel="IN_APP",
+        status="SENT",
+        severity="SUCCESS"
+    )
+    assert notif.user_id == user_id
+    assert notif.notification_type == "DOCUMENT_PROCESSED"
+    assert notif.channel == "IN_APP"
+    assert notif.status == "SENT"
+    assert hasattr(notif, "user")
+
+def test_notification_preference_model_instantiation():
+    user_id = uuid.uuid4()
+    pref = NotificationPreference(
+        user_id=user_id,
+        in_app_enabled=True,
+        email_enabled=True,
+        webhook_enabled=True,
+        email_address="user@intellirag.ai",
+        webhook_url="https://example.com/webhook",
+        webhook_secret="secret123"
+    )
+    assert pref.user_id == user_id
+    assert pref.email_address == "user@intellirag.ai"
+    assert pref.webhook_url == "https://example.com/webhook"
+    assert hasattr(pref, "user")
+
 def test_conversation_model_instantiation():
     user_id = uuid.uuid4()
     conv = Conversation(
@@ -141,6 +179,6 @@ def test_alembic_configuration():
     alembic_cfg.set_main_option("script_location", os.path.join(base_dir, "alembic"))
     script = ScriptDirectory.from_config(alembic_cfg)
     revisions = list(script.walk_revisions())
-    assert len(revisions) >= 6
+    assert len(revisions) >= 7
     head_rev = revisions[0]
-    assert head_rev.revision == "006_add_reminder_models"
+    assert head_rev.revision == "007_add_notification_models"

@@ -34,6 +34,14 @@ from app.schemas.reminder import (
     ReminderSummaryResponse,
     ProcessDueRemindersResponse,
 )
+from app.schemas.notification import (
+    NotificationResponse,
+    NotificationListResponse,
+    UnreadCountResponse,
+    NotificationPreferenceResponse,
+    NotificationPreferenceUpdateRequest,
+    NotificationProcessResponse,
+)
 
 __all__ = [
     "HealthResponse",
@@ -76,4 +84,10 @@ __all__ = [
     "ReminderResponse",
     "ReminderSummaryResponse",
     "ProcessDueRemindersResponse",
+    "NotificationResponse",
+    "NotificationListResponse",
+    "UnreadCountResponse",
+    "NotificationPreferenceResponse",
+    "NotificationPreferenceUpdateRequest",
+    "NotificationProcessResponse",
 ]

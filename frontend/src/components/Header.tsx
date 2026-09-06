@@ -1,12 +1,33 @@
-import React, { useState } from 'react'
-import { Layers, Terminal, Sparkles, User as UserIcon, LogOut, LogIn } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Layers, Terminal, Sparkles, User as UserIcon, LogOut, LogIn, Bell } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { AuthModal } from './AuthModal'
+import { NotificationPanel } from './NotificationPanel'
+import { getUnreadCount } from '../api/notifications'
 
 export const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth()
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
+  const [notificationPanelOpen, setNotificationPanelOpen] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchUnread()
+      const interval = setInterval(fetchUnread, 30000)
+      return () => clearInterval(interval)
+    } else {
+      setUnreadCount(0)
+    }
+  }, [isAuthenticated])
+
+  const fetchUnread = async () => {
+    try {
+      const res = await getUnreadCount()
+      setUnreadCount(res.unread_count)
+    } catch {}
+  }
 
   const openAuth = (mode: 'login' | 'register') => {
     setAuthMode(mode)
@@ -25,7 +46,7 @@ export const Header: React.FC = () => {
               <div className="flex items-center space-x-2">
                 <span className="font-bold text-lg text-white tracking-tight">IntelliRAG</span>
                 <span className="px-2 py-0.5 text-[10px] uppercase font-semibold tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full">
-                  Module 3
+                  Module 12
                 </span>
               </div>
               <p className="text-[11px] text-slate-400">Multimodal AI Document Intelligence Platform</p>
@@ -45,24 +66,47 @@ export const Header: React.FC = () => {
             <div className="hidden sm:block h-4 w-px bg-slate-800" />
             <div className="hidden sm:flex items-center space-x-1.5 text-xs text-slate-400">
               <Layers className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Auth Security</span>
+              <span>Multi-Channel Notifications</span>
             </div>
 
             {isAuthenticated && user ? (
-              <div className="flex items-center space-x-2 bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5">
-                <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400">
-                  <UserIcon className="w-3.5 h-3.5" />
+              <div className="flex items-center space-x-2">
+                <div className="relative">
+                  <button
+                    onClick={() => setNotificationPanelOpen(!notificationPanelOpen)}
+                    title="Notifications"
+                    className="relative p-2 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
+                  >
+                    <Bell className="w-4 h-4" />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 flex h-4 min-w-[16px] px-1 items-center justify-center rounded-full bg-indigo-600 text-[9px] font-bold text-white shadow-lg ring-2 ring-slate-950">
+                        {unreadCount > 99 ? '99+' : unreadCount}
+                      </span>
+                    )}
+                  </button>
+
+                  <NotificationPanel
+                    isOpen={notificationPanelOpen}
+                    onClose={() => setNotificationPanelOpen(false)}
+                    onUnreadCountChange={(count) => setUnreadCount(count)}
+                  />
                 </div>
-                <span className="text-xs font-medium text-slate-200 max-w-[140px] truncate">
-                  {user.email}
-                </span>
-                <button
-                  onClick={logout}
-                  title="Sign out"
-                  className="text-slate-400 hover:text-rose-400 p-1 rounded transition-colors ml-1"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                </button>
+
+                <div className="flex items-center space-x-2 bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5">
+                  <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                    <UserIcon className="w-3.5 h-3.5" />
+                  </div>
+                  <span className="text-xs font-medium text-slate-200 max-w-[140px] truncate">
+                    {user.email}
+                  </span>
+                  <button
+                    onClick={logout}
+                    title="Sign out"
+                    className="text-slate-400 hover:text-rose-400 p-1 rounded transition-colors ml-1"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="flex items-center space-x-2">

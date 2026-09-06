@@ -39,6 +39,15 @@ class Settings(BaseSettings):
     RAG_DEFAULT_TOP_K: int = 5
     RAG_DEFAULT_SIMILARITY_THRESHOLD: float = 0.25
 
+    NOTIFICATION_EMAIL_ENABLED: bool = False
+    SMTP_HOST: str = ""
+    SMTP_PORT: int = 587
+    SMTP_USERNAME: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM: str = "notifications@intellirag.ai"
+    WEBHOOK_TIMEOUT_SECONDS: int = 5
+    NOTIFICATION_MAX_RETRIES: int = 3
+
     @field_validator("CORS_ORIGINS", "ALLOWED_EXTENSIONS", mode="before")
     def assemble_list_fields(cls, v: Union[str, List[str]]) -> List[str]:
         if isinstance(v, str):
