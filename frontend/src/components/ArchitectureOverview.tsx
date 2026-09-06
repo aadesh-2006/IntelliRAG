@@ -124,6 +124,20 @@ export const ArchitectureOverview: React.FC = () => {
           <p className="text-xs text-slate-400 mt-1">Grounded prompt construction, replaceable LLM abstraction, verified source citations, and zero-context safety.</p>
         </div>
 
+        <div className="border border-indigo-500/40 bg-indigo-950/20 rounded-xl p-4 relative overflow-hidden">
+          <div className="flex items-center justify-between mb-3">
+            <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-400">
+              <Check className="w-5 h-5" />
+            </div>
+            <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <Check className="w-3 h-3" />
+              <span>Module 9 Completed</span>
+            </span>
+          </div>
+          <h4 className="text-sm font-bold text-slate-100">Workspace Dashboard</h4>
+          <p className="text-xs text-slate-400 mt-1">Operational KPIs, ingestion &amp; chunk metrics, type distributions, lifecycle monitors, and quick workflows.</p>
+        </div>
+
         <div className="border border-slate-800 bg-slate-950/50 rounded-xl p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="p-2 rounded-lg bg-slate-800 text-slate-400">
@@ -131,7 +145,7 @@ export const ArchitectureOverview: React.FC = () => {
             </div>
             <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-400">
               <Clock className="w-3 h-3" />
-              <span>Module 9 Planned</span>
+              <span>Module 10 Planned</span>
             </span>
           </div>
           <h4 className="text-sm font-bold text-slate-300">Intelligent Query Router</h4>

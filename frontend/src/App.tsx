@@ -9,12 +9,16 @@ import { DocumentUploadCard } from './components/DocumentUploadCard'
 import { DocumentList } from './components/DocumentList'
 import { SemanticSearchCard } from './components/SemanticSearchCard'
 import { RAGQueryCard } from './components/RAGQueryCard'
+import { DashboardOverview } from './components/DashboardOverview'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { checkBackendHealth, HealthStatus } from './api/health'
-import { ShieldCheck, UserCheck, Lock } from 'lucide-react'
+import { ShieldCheck, UserCheck, Lock, LayoutDashboard, Files, Bot, Search, Layers } from 'lucide-react'
+
+type TabType = 'dashboard' | 'documents' | 'rag' | 'search' | 'roadmap'
 
 export const AppContent: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth()
+  const [activeTab, setActiveTab] = useState<TabType>('dashboard')
   const [status, setStatus] = useState<HealthStatus | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -62,7 +66,7 @@ export const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
       <Header />
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <HeroSection />
 
         {!isAuthenticated ? (
@@ -82,7 +86,7 @@ export const AppContent: React.FC = () => {
             <AuthCard />
           </div>
         ) : (
-          <div className="space-y-10 animate-fade-in">
+          <div className="space-y-8 animate-fade-in">
             <div className="bg-gradient-to-r from-indigo-950/40 via-slate-900/60 to-slate-950 border border-indigo-900/40 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center space-x-3.5">
                 <div className="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0">
@@ -106,24 +110,112 @@ export const AppContent: React.FC = () => {
               </div>
             </div>
 
-            <RAGQueryCard refreshTrigger={refreshTrigger} />
+            <div className="flex items-center overflow-x-auto border-b border-slate-800 pb-2 gap-2 scrollbar-none">
+              <button
+                type="button"
+                onClick={() => setActiveTab('dashboard')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                  activeTab === 'dashboard'
+                    ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/20'
+                    : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                }`}
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span>Dashboard</span>
+              </button>
 
-            <SemanticSearchCard refreshTrigger={refreshTrigger} />
+              <button
+                type="button"
+                onClick={() => setActiveTab('documents')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                  activeTab === 'documents'
+                    ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/20'
+                    : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                }`}
+              >
+                <Files className="w-4 h-4" />
+                <span>Document Vault</span>
+              </button>
 
-            <DocumentUploadCard onUploadSuccess={handleUploadSuccess} />
+              <button
+                type="button"
+                onClick={() => setActiveTab('rag')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                  activeTab === 'rag'
+                    ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/20'
+                    : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                }`}
+              >
+                <Bot className="w-4 h-4" />
+                <span>RAG Q&amp;A</span>
+              </button>
 
-            <DocumentList refreshTrigger={refreshTrigger} />
+              <button
+                type="button"
+                onClick={() => setActiveTab('search')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                  activeTab === 'search'
+                    ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/20'
+                    : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                }`}
+              >
+                <Search className="w-4 h-4" />
+                <span>Semantic Search</span>
+              </button>
 
-            <div className="max-w-2xl mx-auto">
-              <StatusBadge
-                status={status}
-                loading={loading}
-                error={error}
-                onRefresh={verifyHealth}
-              />
+              <button
+                type="button"
+                onClick={() => setActiveTab('roadmap')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                  activeTab === 'roadmap'
+                    ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/20'
+                    : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                }`}
+              >
+                <Layers className="w-4 h-4" />
+                <span>Architecture Roadmap</span>
+              </button>
             </div>
 
-            <ArchitectureOverview />
+            {activeTab === 'dashboard' && (
+              <DashboardOverview
+                onNavigateTab={(tab) => setActiveTab(tab)}
+                refreshTrigger={refreshTrigger}
+              />
+            )}
+
+            {activeTab === 'documents' && (
+              <div className="space-y-8 animate-fade-in">
+                <DocumentUploadCard onUploadSuccess={handleUploadSuccess} />
+                <DocumentList refreshTrigger={refreshTrigger} />
+              </div>
+            )}
+
+            {activeTab === 'rag' && (
+              <div className="animate-fade-in">
+                <RAGQueryCard refreshTrigger={refreshTrigger} />
+              </div>
+            )}
+
+            {activeTab === 'search' && (
+              <div className="animate-fade-in">
+                <SemanticSearchCard refreshTrigger={refreshTrigger} />
+              </div>
+            )}
+
+            {activeTab === 'roadmap' && (
+              <div className="space-y-8 animate-fade-in">
+                <div className="max-w-2xl mx-auto">
+                  <StatusBadge
+                    status={status}
+                    loading={loading}
+                    error={error}
+                    onRefresh={verifyHealth}
+                  />
+                </div>
+                <ArchitectureOverview />
+              </div>
+            )}
           </div>
         )}
       </main>

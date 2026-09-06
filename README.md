@@ -25,9 +25,9 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - [x] **Module 6 — Chunking & Embeddings:** Structure-aware chunking preserving sections/headings/tables/bounding boxes, local CPU-compatible 768-dimensional vector embedding service, pgvector persistence, chunk inspection modal, and idempotency protection against duplicate embeddings.
 - [x] **Module 7 — Retrieval & Semantic Search:** pgvector cosine similarity search, query vector generation, distance/similarity scoring, top_k ranking, similarity threshold filtering, metadata & document-type scoping, and interactive frontend semantic query workspace.
 - [x] **Module 8 — RAG Answer Generation:** Complete grounded question-answering pipeline, prompt construction with untrusted-data boundary separation, replaceable LLM provider abstraction (Google Gemini / deterministic Mock), structured source citations, and interactive RAG workspace.
-- [ ] **Module 9 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
-- [ ] **Module 10 — AI Analytics:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
-- [ ] **Module 11 — Dashboard:** Interactive dashboard UI, ingestion statistics, document explorer, and status monitoring. *(Planned)*
+- [x] **Module 9 — Dashboard:** Interactive operational dashboard overview, summary KPIs (total documents, ready, processing/embedding, failed, total chunks, storage footprint), document lifecycle monitoring, type distributions, recent document ingestions, and direct modal inspection workflows.
+- [ ] **Module 10 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
+- [ ] **Module 11 — AI Analytics:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
 - [ ] **Module 12 — Chat Interface:** Conversational document assistant, citation tracking, and groundedness visualizer. *(Planned)*
 - [ ] **Module 13 — Reminder Engine:** Actionable date detection, scheduled alerts, warranty/expiry tracking, and automated reminders. *(Planned)*
 - [ ] **Module 14 — Notification System:** Multi-channel alerting (email, in-app, webhooks) for document events and query alerts. *(Planned)*
@@ -40,7 +40,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 
 ## Tech Stack
 
-### Implemented (Modules 1, 2, 3, 4, 5, 6, 7 & 8)
+### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8 & 9)
 - **Backend:** Python 3.13+, FastAPI, Uvicorn, Pydantic v2, Pydantic Settings, HTTPX, Pytest
 - **Authentication & Security:** PyJWT, bcrypt, OAuth2 Password Bearer flow
 - **Storage & File Management:** Chunked streaming file storage, UUID-isolated paths, extension & size validation
@@ -48,6 +48,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - **Chunking & Vector Embeddings:** Structure-aware chunker, 768-dim CPU embedding provider, batch embeddings, pgvector
 - **Semantic Search & Retrieval:** pgvector cosine distance `<=>`, top_k ranking, similarity threshold filtering, multi-tenant document isolation
 - **RAG & Answer Synthesis:** Grounded prompt builder, citation mapping, replaceable LLM abstraction (Google Gemini API / Mock), zero-context hallucination guardrails
+- **Dashboard & Operations:** Real-time multi-tenant KPI aggregations, lifecycle state breakdowns, document classification distribution metrics
 - **Database & Vectors:** PostgreSQL, SQLAlchemy 2.x, Alembic, psycopg 3 (binary), pgvector
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React
 - **DevOps:** Docker, Docker Compose (pgvector/pgvector:pg17)
@@ -72,8 +73,11 @@ IntelliRAG/
 │   │   ├── env.py
 │   │   └── script.py.mako
 │   ├── app/
+│   │   ├── api/
+│   │   │   ├── endpoints/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── auth.py
+│   │   │   │   ├── dashboard.py
 │   │   │   │   ├── documents.py
 │   │   │   │   ├── health.py
 │   │   │   │   ├── rag.py
@@ -97,6 +101,7 @@ IntelliRAG/
 │   │   │   ├── __init__.py
 │   │   │   ├── auth.py
 │   │   │   ├── chunk.py
+│   │   │   ├── dashboard.py
 │   │   │   ├── document.py
 │   │   │   ├── health.py
 │   │   │   ├── processing.py
@@ -115,6 +120,7 @@ IntelliRAG/
 │   │   │   ├── __init__.py
 │   │   │   ├── auth_service.py
 │   │   │   ├── chunking_service.py
+│   │   │   ├── dashboard_service.py
 │   │   │   ├── document_chunk_service.py
 │   │   │   ├── document_service.py
 │   │   │   ├── embedding_service.py
@@ -131,6 +137,7 @@ IntelliRAG/
 │   │   ├── conftest.py
 │   │   ├── test_auth.py
 │   │   ├── test_chunking_embeddings.py
+│   │   ├── test_dashboard.py
 │   │   ├── test_database.py
 │   │   ├── test_documents.py
 │   │   ├── test_health.py
@@ -149,6 +156,7 @@ IntelliRAG/
 │   │   │   ├── auth.ts
 │   │   │   ├── authStorage.ts
 │   │   │   ├── client.ts
+│   │   │   ├── dashboard.ts
 │   │   │   ├── documents.ts
 │   │   │   ├── health.ts
 │   │   │   ├── rag.ts
@@ -157,6 +165,7 @@ IntelliRAG/
 │   │   │   ├── ArchitectureOverview.tsx
 │   │   │   ├── AuthCard.tsx
 │   │   │   ├── AuthModal.tsx
+│   │   │   ├── DashboardOverview.tsx
 │   │   │   ├── DocumentChunksModal.tsx
 │   │   │   ├── DocumentInspectionModal.tsx
 │   │   │   ├── DocumentList.tsx
@@ -310,6 +319,9 @@ docker-compose up -d db
 
 ### RAG & Question Answering Endpoints
 - **`POST /api/rag/query`**: Submit a natural language question to generate grounded answers with source citations from retrieved vector chunks (`Authorization: Bearer <token>` required).
+
+### Dashboard & Operational Endpoints
+- **`GET /api/dashboard/stats`**: Retrieve authenticated user's workspace statistics, KPI counters, lifecycle breakdown, type distributions, storage usage, and recent document ingestions (`Authorization: Bearer <token>` required).
 
 ### Interactive API Documentation
 - **Swagger UI:** `http://localhost:8000/api/docs`
