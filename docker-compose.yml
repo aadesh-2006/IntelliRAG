@@ -11,7 +11,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d intellirag"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-intellirag}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -20,13 +20,29 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    restart: always
     ports:
       - "8000:8000"
     environment:
-      - ENVIRONMENT=development
-      - DEBUG=True
-      - DATABASE_URL=postgresql+psycopg://postgres:postgres@db:5432/intellirag
-      - CORS_ORIGINS=["http://localhost:5173","http://localhost:3000","http://localhost:80"]
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - DEBUG=${DEBUG:-True}
+      - DATABASE_URL=postgresql+psycopg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-intellirag}
+      - CORS_ORIGINS=${CORS_ORIGINS:-["http://localhost:5173","http://localhost:3000","http://localhost:80"]}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-changethis-insecure-development-jwt-secret-key-32charsmin}
+      - LLM_PROVIDER=${LLM_PROVIDER:-mock}
+      - LLM_MODEL=${LLM_MODEL:-gemini-1.5-flash}
+      - LLM_API_KEY=${LLM_API_KEY:-}
+      - SCHEDULER_ENABLED=${SCHEDULER_ENABLED:-True}
+      - REMINDER_CHECK_INTERVAL_SECONDS=${REMINDER_CHECK_INTERVAL_SECONDS:-60}
+      - NOTIFICATION_EMAIL_ENABLED=${NOTIFICATION_EMAIL_ENABLED:-False}
+    volumes:
+      - uploads_data:/app/storage/uploads
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     depends_on:
       db:
         condition: service_healthy
@@ -35,6 +51,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    restart: always
     ports:
       - "3000:80"
     depends_on:
@@ -42,3 +59,4 @@ services:
 
 volumes:
   postgres_data:
+  uploads_data:

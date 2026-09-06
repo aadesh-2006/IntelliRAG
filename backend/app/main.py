@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.endpoints import health
 from app.api.router import api_router
 from app.config import settings
 from app.core.scheduler import app_scheduler
@@ -17,6 +18,7 @@ def create_application() -> FastAPI:
     application = FastAPI(
         title=settings.PROJECT_NAME,
         version=settings.VERSION,
+        description="IntelliRAG - Autonomous Multimodal Document AI, Enterprise Hybrid RAG, Cricket Scorecard Intelligence, and Actionable Reminder Engine.",
         openapi_url=f"{settings.API_V1_PREFIX}/openapi.json",
         docs_url=f"{settings.API_V1_PREFIX}/docs",
         redoc_url=f"{settings.API_V1_PREFIX}/redoc",
@@ -31,6 +33,7 @@ def create_application() -> FastAPI:
         allow_headers=["*"],
     )
 
+    application.include_router(health.router, tags=["Health"])
     application.include_router(api_router, prefix=settings.API_V1_PREFIX)
 
     return application

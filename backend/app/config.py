@@ -1,6 +1,6 @@
 import json
 from typing import List, Union
-from pydantic import field_validator
+from pydantic import field_validator, ValidationInfo
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
@@ -61,6 +61,14 @@ class Settings(BaseSettings):
                 except Exception:
                     pass
             return [i.strip() for i in v.split(",") if i.strip()]
+        return v
+
+    @field_validator("JWT_SECRET_KEY")
+    def validate_jwt_secret(cls, v: str, info: ValidationInfo) -> str:
+        env = info.data.get("ENVIRONMENT", "development") if info.data else "development"
+        if isinstance(env, str) and env.lower() == "production":
+            if not v or v == "changethis-insecure-development-jwt-secret-key-32charsmin" or len(v) < 32:
+                raise ValueError("In production, JWT_SECRET_KEY must be a secure random secret of at least 32 characters.")
         return v
 
     model_config = SettingsConfigDict(

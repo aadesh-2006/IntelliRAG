@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from sqlalchemy import text
 from app.config import settings
 from app.db.session import engine
-from app.schemas.health import HealthResponse
+from app.schemas.health import HealthResponse, ReadinessResponse
 
 router = APIRouter()
 
@@ -25,3 +25,12 @@ def get_health() -> HealthResponse:
         environment=settings.ENVIRONMENT,
         database=db_status,
     )
+
+@router.get("/health/ready", response_model=ReadinessResponse)
+def get_readiness() -> ReadinessResponse:
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return ReadinessResponse(status="ready", database="connected")
+    except Exception:
+        return ReadinessResponse(status="not_ready", database="unavailable")
