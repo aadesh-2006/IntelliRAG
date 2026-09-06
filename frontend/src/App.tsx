@@ -11,11 +11,12 @@ import { SemanticSearchCard } from './components/SemanticSearchCard'
 import { RAGQueryCard } from './components/RAGQueryCard'
 import { DashboardOverview } from './components/DashboardOverview'
 import { ChatInterface } from './components/ChatInterface'
+import { RemindersOverview } from './components/RemindersOverview'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { checkBackendHealth, HealthStatus } from './api/health'
-import { ShieldCheck, UserCheck, Lock, LayoutDashboard, Files, MessageSquare, Bot, Search, Layers } from 'lucide-react'
+import { ShieldCheck, UserCheck, Lock, LayoutDashboard, Files, MessageSquare, Bot, Search, Layers, Bell } from 'lucide-react'
 
-type TabType = 'dashboard' | 'documents' | 'chat' | 'rag' | 'search' | 'roadmap'
+type TabType = 'dashboard' | 'documents' | 'chat' | 'reminders' | 'rag' | 'search' | 'roadmap'
 
 export const AppContent: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth()
@@ -153,6 +154,19 @@ export const AppContent: React.FC = () => {
 
               <button
                 type="button"
+                onClick={() => setActiveTab('reminders')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                  activeTab === 'reminders'
+                    ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/20'
+                    : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                }`}
+              >
+                <Bell className="w-4 h-4" />
+                <span>Reminders &amp; Expiries</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setActiveTab('rag')}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
                   activeTab === 'rag'
@@ -208,6 +222,12 @@ export const AppContent: React.FC = () => {
             {activeTab === 'chat' && (
               <div className="animate-fade-in">
                 <ChatInterface refreshTrigger={refreshTrigger} />
+              </div>
+            )}
+
+            {activeTab === 'reminders' && (
+              <div className="animate-fade-in">
+                <RemindersOverview refreshTrigger={refreshTrigger} />
               </div>
             )}
 

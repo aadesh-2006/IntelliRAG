@@ -27,10 +27,10 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - [x] **Module 8 — RAG Answer Generation:** Complete grounded question-answering pipeline, prompt construction with untrusted-data boundary separation, replaceable LLM provider abstraction (Google Gemini / deterministic Mock), structured source citations, and interactive RAG workspace.
 - [x] **Module 9 — Dashboard:** Interactive operational dashboard overview, summary KPIs (total documents, ready, processing/embedding, failed, total chunks, storage footprint), document lifecycle monitoring, type distributions, recent document ingestions, and direct modal inspection workflows.
 - [x] **Module 10 — Conversational Chat Interface:** Persistent multi-turn conversations, bounded conversational context management, user-isolated chat message history, source citation tracking, and retrieval grounding signal visualizations.
-- [ ] **Module 11 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
-- [ ] **Module 12 — AI Analytics:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
-- [ ] **Module 13 — Reminder Engine:** Actionable date detection, scheduled alerts, warranty/expiry tracking, and automated reminders. *(Planned)*
-- [ ] **Module 14 — Notification System:** Multi-channel alerting (email, in-app, webhooks) for document events and query alerts. *(Planned)*
+- [x] **Module 11 — Reminder Engine:** Production-grade reminder engine, context-aware actionable date extraction (warranties, expiries, renewals, payment due dates, deadlines), lead-time alert calculations, document date scanner, and complete CRUD reminder tracking workspace.
+- [ ] **Module 12 — Notification System:** Multi-channel alerting (email, in-app, webhooks) for document events and query alerts. *(Planned)*
+- [ ] **Module 13 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
+- [ ] **Module 14 — AI Analytics:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
 - [ ] **Module 15 — Cricket Scorecard AI:** Specialized multimodal extraction engine for cricket scorecards, player statistics, and match summaries. *(Planned)*
 - [ ] **Module 16 — End-to-End Integration:** Unified orchestration connecting ingestion, storage, search, synthesis, and UI workflows. *(Planned)*
 - [ ] **Module 17 — Testing & AI Evaluation:** Automated evaluation suite, retrieval precision/recall benchmarks, and regression testing. *(Planned)*
@@ -40,7 +40,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 
 ## Tech Stack
 
-### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8, 9 & 10)
+### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 & 11)
 - **Backend:** Python 3.13+, FastAPI, Uvicorn, Pydantic v2, Pydantic Settings, HTTPX, Pytest
 - **Authentication & Security:** PyJWT, bcrypt, OAuth2 Password Bearer flow
 - **Storage & File Management:** Chunked streaming file storage, UUID-isolated paths, extension & size validation
@@ -50,6 +50,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - **RAG & Answer Synthesis:** Grounded prompt builder, citation mapping, replaceable LLM abstraction (Google Gemini API / Mock), zero-context hallucination guardrails
 - **Dashboard & Operations:** Real-time multi-tenant KPI aggregations, lifecycle state breakdowns, document classification distribution metrics
 - **Conversational Chat:** Multi-turn conversation sessions, bounded message context window, citation sources, retrieval grounding signals
+- **Reminder Engine & Date Intelligence:** Context-aware date extraction regex engine, table cell mapping, warranty/expiry/renewal tracking, lead-time delta computation, due state transitions
 - **Database & Vectors:** PostgreSQL, SQLAlchemy 2.x, Alembic, psycopg 3 (binary), pgvector
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React
 - **DevOps:** Docker, Docker Compose (pgvector/pgvector:pg17)
@@ -71,7 +72,8 @@ IntelliRAG/
 │   │   │   ├── 002_add_user_password_hash.py
 │   │   │   ├── 003_add_document_processing_fields.py
 │   │   │   ├── 004_add_vector_indexes.py
-│   │   │   └── 005_add_conversation_models.py
+│   │   │   ├── 005_add_conversation_models.py
+│   │   │   └── 006_add_reminder_models.py
 │   │   ├── env.py
 │   │   └── script.py.mako
 │   ├── app/
@@ -84,6 +86,7 @@ IntelliRAG/
 │   │   │   │   ├── documents.py
 │   │   │   │   ├── health.py
 │   │   │   │   ├── rag.py
+│   │   │   │   ├── reminders.py
 │   │   │   │   └── retrieval.py
 │   │   │   ├── __init__.py
 │   │   │   ├── deps.py
@@ -100,6 +103,7 @@ IntelliRAG/
 │   │   │   ├── conversation.py
 │   │   │   ├── document.py
 │   │   │   ├── document_chunk.py
+│   │   │   ├── reminder.py
 │   │   │   └── user.py
 │   │   ├── schemas/
 │   │   │   ├── __init__.py
@@ -111,6 +115,7 @@ IntelliRAG/
 │   │   │   ├── health.py
 │   │   │   ├── processing.py
 │   │   │   ├── rag.py
+│   │   │   ├── reminder.py
 │   │   │   └── retrieval.py
 │   │   ├── services/
 │   │   │   ├── document_processing/
@@ -127,12 +132,14 @@ IntelliRAG/
 │   │   │   ├── chunking_service.py
 │   │   │   ├── conversation_service.py
 │   │   │   ├── dashboard_service.py
+│   │   │   ├── date_extractor.py
 │   │   │   ├── document_chunk_service.py
 │   │   │   ├── document_service.py
 │   │   │   ├── embedding_service.py
 │   │   │   ├── llm_service.py
 │   │   │   ├── prompt_service.py
 │   │   │   ├── rag_service.py
+│   │   │   ├── reminder_service.py
 │   │   │   ├── retrieval_service.py
 │   │   │   └── storage_service.py
 │   │   ├── __init__.py
@@ -150,6 +157,7 @@ IntelliRAG/
 │   │   ├── test_health.py
 │   │   ├── test_processing.py
 │   │   ├── test_rag.py
+│   │   ├── test_reminders.py
 │   │   └── test_retrieval.py
 │   ├── .env.example
 │   ├── alembic.ini
@@ -168,6 +176,7 @@ IntelliRAG/
 │   │   │   ├── documents.ts
 │   │   │   ├── health.ts
 │   │   │   ├── rag.ts
+│   │   │   ├── reminders.ts
 │   │   │   └── retrieval.ts
 │   │   ├── components/
 │   │   │   ├── ArchitectureOverview.tsx
@@ -183,6 +192,7 @@ IntelliRAG/
 │   │   │   ├── Header.tsx
 │   │   │   ├── HeroSection.tsx
 │   │   │   ├── RAGQueryCard.tsx
+│   │   │   ├── RemindersOverview.tsx
 │   │   │   ├── SemanticSearchCard.tsx
 │   │   │   └── StatusBadge.tsx
 │   │   ├── context/
@@ -320,8 +330,19 @@ docker-compose up -d db
 - **`GET /api/documents/{document_id}/content`**: Retrieve extracted document text, layout blocks, detected tables, and metadata (`Authorization: Bearer <token>` required).
 - **`POST /api/documents/{document_id}/embed`**: Generate structure-aware chunks and 768-dim embeddings stored in pgvector (`Authorization: Bearer <token>` required).
 - **`GET /api/documents/{document_id}/chunks`**: Retrieve generated vector chunks and source citation metadata (`Authorization: Bearer <token>` required).
+- **`POST /api/documents/{document_id}/actionable-dates`**: Scan processed document for actionable expiry, warranty, renewal, and payment due dates (`Authorization: Bearer <token>` required).
 - **`GET /api/documents/{document_id}/download`**: Download document binary stream (`Authorization: Bearer <token>` required).
 - **`DELETE /api/documents/{document_id}`**: Delete document record, chunks, and storage file (`Authorization: Bearer <token>` required).
+
+### Actionable Reminders & Intelligence Endpoints
+- **`POST /api/reminders`**: Create a scheduled reminder with optional document link, lead-time delta calculation, and candidate provenance metadata (`Authorization: Bearer <token>` required).
+- **`GET /api/reminders`**: List reminders with status, type, document, upcoming, and overdue filters (`Authorization: Bearer <token>` required).
+- **`GET /api/reminders/summary`**: Retrieve reminder operational summary (pending, due, overdue, warranty/expiry counters, next reminder) (`Authorization: Bearer <token>` required).
+- **`POST /api/reminders/process-due`**: Evaluate pending reminders against current time and transition due items (`Authorization: Bearer <token>` required).
+- **`GET /api/reminders/{reminder_id}`**: Retrieve single reminder details (`Authorization: Bearer <token>` required).
+- **`PATCH /api/reminders/{reminder_id}`**: Update reminder title, description, type, due/remind timestamps, or status (`Authorization: Bearer <token>` required).
+- **`POST /api/reminders/{reminder_id}/complete`**: Mark reminder completed and timestamp resolution (`Authorization: Bearer <token>` required).
+- **`DELETE /api/reminders/{reminder_id}`**: Permanently delete a reminder record (`Authorization: Bearer <token>` required).
 
 ### Semantic Search & Retrieval Endpoints
 - **`POST /api/retrieval/search`**: Query vector store for semantically similar chunks with pgvector cosine distance, top_k ranking, similarity threshold filtering, and document/document-type scoping (`Authorization: Bearer <token>` required).

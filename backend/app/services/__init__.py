@@ -18,6 +18,8 @@ from app.services.llm_service import BaseLLMService, MockLLMService, GeminiLLMSe
 from app.services.rag_service import RAGService, rag_service
 from app.services.dashboard_service import DashboardService, dashboard_service
 from app.services.conversation_service import ConversationService, conversation_service
+from app.services.date_extractor import ActionableDateExtractor, date_extractor
+from app.services.reminder_service import ReminderService, reminder_service
 
 __all__ = [
     "get_user_by_email",
@@ -55,4 +57,8 @@ __all__ = [
     "dashboard_service",
     "ConversationService",
     "conversation_service",
+    "ActionableDateExtractor",
+    "date_extractor",
+    "ReminderService",
+    "reminder_service",
 ]

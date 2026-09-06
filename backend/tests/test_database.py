@@ -11,6 +11,7 @@ from app.models.user import User
 from app.models.document import Document
 from app.models.document_chunk import DocumentChunk
 from app.models.conversation import Conversation, ConversationMessage
+from app.models.reminder import Reminder
 
 def test_settings_database_configuration():
     assert settings.DATABASE_URL is not None
@@ -26,6 +27,7 @@ def test_models_metadata_registration():
     assert "document_chunks" in table_names
     assert "conversations" in table_names
     assert "conversation_messages" in table_names
+    assert "reminders" in table_names
 
 def test_user_model_instantiation():
     user = User(
@@ -36,6 +38,7 @@ def test_user_model_instantiation():
     assert user.password_hash == "hashed_secret_string"
     assert hasattr(user, "documents")
     assert hasattr(user, "conversations")
+    assert hasattr(user, "reminders")
 
 def test_document_model_instantiation():
     user_id = uuid.uuid4()
@@ -55,6 +58,7 @@ def test_document_model_instantiation():
     assert doc.document_type == "GENERAL_DOCUMENT"
     assert hasattr(doc, "chunks")
     assert hasattr(doc, "user")
+    assert hasattr(doc, "reminders")
 
 def test_document_chunk_model_instantiation():
     doc_id = uuid.uuid4()
@@ -70,6 +74,28 @@ def test_document_chunk_model_instantiation():
     assert chunk.chunk_metadata == {"page": 1, "section": "Introduction"}
     assert hasattr(chunk, "document")
     assert hasattr(chunk, "embedding")
+
+def test_reminder_model_instantiation():
+    user_id = uuid.uuid4()
+    doc_id = uuid.uuid4()
+    rem = Reminder(
+        user_id=user_id,
+        document_id=doc_id,
+        title="Warranty Renewal",
+        description="Renew hardware warranty",
+        reminder_type="WARRANTY",
+        due_at="2026-12-31T00:00:00Z",
+        remind_at="2026-12-24T00:00:00Z",
+        status="PENDING",
+        source_text="Warranty expires on Dec 31, 2026"
+    )
+    assert rem.user_id == user_id
+    assert rem.document_id == doc_id
+    assert rem.title == "Warranty Renewal"
+    assert rem.reminder_type == "WARRANTY"
+    assert rem.status == "PENDING"
+    assert hasattr(rem, "user")
+    assert hasattr(rem, "document")
 
 def test_conversation_model_instantiation():
     user_id = uuid.uuid4()
@@ -115,6 +141,6 @@ def test_alembic_configuration():
     alembic_cfg.set_main_option("script_location", os.path.join(base_dir, "alembic"))
     script = ScriptDirectory.from_config(alembic_cfg)
     revisions = list(script.walk_revisions())
-    assert len(revisions) >= 5
+    assert len(revisions) >= 6
     head_rev = revisions[0]
-    assert head_rev.revision == "005_add_conversation_models"
+    assert head_rev.revision == "006_add_reminder_models"

@@ -9,6 +9,7 @@ from app.db.base import Base
 if TYPE_CHECKING:
     from app.models.document import Document
     from app.models.conversation import Conversation
+    from app.models.reminder import Reminder
 
 class User(Base):
     __tablename__ = "users"
@@ -47,6 +48,11 @@ class User(Base):
     )
     conversations: Mapped[List["Conversation"]] = relationship(
         "Conversation",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+    reminders: Mapped[List["Reminder"]] = relationship(
+        "Reminder",
         back_populates="user",
         cascade="all, delete-orphan"
     )

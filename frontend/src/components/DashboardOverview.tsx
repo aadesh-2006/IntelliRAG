@@ -15,6 +15,7 @@ import {
   Search,
   Upload,
   RefreshCw,
+  Bell,
 } from 'lucide-react'
 import { getDashboardStats, DashboardStats } from '../api/dashboard'
 import { DocumentItem, downloadDocument } from '../api/documents'
@@ -22,7 +23,7 @@ import { DocumentInspectionModal } from './DocumentInspectionModal'
 import { DocumentChunksModal } from './DocumentChunksModal'
 
 interface DashboardOverviewProps {
-  onNavigateTab: (tab: 'dashboard' | 'documents' | 'chat' | 'rag' | 'search' | 'roadmap') => void
+  onNavigateTab: (tab: 'dashboard' | 'documents' | 'chat' | 'reminders' | 'rag' | 'search' | 'roadmap') => void
   refreshTrigger?: number
 }
 
@@ -349,6 +350,23 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
                   </div>
                   <p className="text-[11px] text-slate-400 mt-0.5">
                     Retrieve relevant chunk rankings by cosine score
+                  </p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onNavigateTab('reminders')}
+                className="w-full text-left p-3 rounded-xl bg-slate-950/40 hover:bg-slate-950/80 border border-slate-800 hover:border-slate-700 transition-all flex items-center justify-between group"
+              >
+                <div>
+                  <div className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <Bell className="w-3.5 h-3.5 text-amber-400" />
+                    Actionable Reminders &amp; Expiries
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-0.5">
+                    Warranties, contract renewals, due dates &amp; alerts
                   </p>
                 </div>
                 <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />

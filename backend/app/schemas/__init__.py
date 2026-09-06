@@ -25,6 +25,15 @@ from app.schemas.conversation import (
     SendMessageRequest,
     SendMessageResponse,
 )
+from app.schemas.reminder import (
+    ActionableDateResponse,
+    ActionableDatesListResponse,
+    ReminderCreateRequest,
+    ReminderUpdateRequest,
+    ReminderResponse,
+    ReminderSummaryResponse,
+    ProcessDueRemindersResponse,
+)
 
 __all__ = [
     "HealthResponse",
@@ -60,4 +69,11 @@ __all__ = [
     "ConversationMessageResponse",
     "SendMessageRequest",
     "SendMessageResponse",
+    "ActionableDateResponse",
+    "ActionableDatesListResponse",
+    "ReminderCreateRequest",
+    "ReminderUpdateRequest",
+    "ReminderResponse",
+    "ReminderSummaryResponse",
+    "ProcessDueRemindersResponse",
 ]

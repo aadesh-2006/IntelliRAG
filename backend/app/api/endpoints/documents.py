@@ -10,6 +10,7 @@ from app.config import settings
 from app.schemas.document import DocumentResponse, DocumentListResponse
 from app.schemas.processing import DocumentContentResponse
 from app.schemas.chunk import ChunkResponse, ChunkListResponse
+from app.schemas.reminder import ActionableDatesListResponse
 from app.services.document_service import (
     create_document,
     list_documents,
@@ -21,6 +22,7 @@ from app.services.document_chunk_service import (
     generate_and_store_chunks,
     list_document_chunks,
 )
+from app.services.reminder_service import reminder_service
 from app.services.storage_service import storage_service
 
 router = APIRouter()
@@ -171,6 +173,18 @@ def download_document(
         path=str(file_path),
         filename=document.original_filename,
         media_type=document.file_type
+    )
+
+@router.post("/{document_id}/actionable-dates", response_model=ActionableDatesListResponse)
+def scan_document_actionable_dates(
+    document_id: uuid.UUID,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> ActionableDatesListResponse:
+    return reminder_service.scan_document_actionable_dates(
+        db=db,
+        user=current_user,
+        document_id=document_id
     )
 
 @router.delete("/{document_id}", status_code=status.HTTP_204_NO_CONTENT)
