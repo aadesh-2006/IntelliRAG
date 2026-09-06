@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from app.models.conversation import Conversation
     from app.models.reminder import Reminder
     from app.models.notification import Notification, NotificationPreference
+    from app.models.cricket import CricketMatch
 
 class User(Base):
     __tablename__ = "users"
@@ -66,5 +67,10 @@ class User(Base):
         "NotificationPreference",
         back_populates="user",
         uselist=False,
+        cascade="all, delete-orphan"
+    )
+    cricket_matches: Mapped[List["CricketMatch"]] = relationship(
+        "CricketMatch",
+        back_populates="user",
         cascade="all, delete-orphan"
     )

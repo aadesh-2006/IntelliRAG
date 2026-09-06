@@ -29,9 +29,9 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - [x] **Module 10 — Conversational Chat Interface:** Persistent multi-turn conversations, bounded conversational context management, user-isolated chat message history, source citation tracking, and retrieval grounding signal visualizations.
 - [x] **Module 11 — Reminder Engine:** Production-grade reminder engine, context-aware actionable date extraction (warranties, expiries, renewals, payment due dates, deadlines), lead-time alert calculations, document date scanner, and complete CRUD reminder tracking workspace.
 - [x] **Module 12 — Notification System:** Multi-channel alerting (In-App notifications, Email SMTP transport, Webhook dispatching with HMAC-SHA256 signatures), idempotent event key deduplication, notification retry worker, and user preference management.
-- [ ] **Module 13 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
-- [ ] **Module 14 — AI Analytics:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
-- [ ] **Module 15 — Cricket Scorecard AI:** Specialized multimodal extraction engine for cricket scorecards, player statistics, and match summaries. *(Planned)*
+- [x] **Module 13 — Cricket Scorecard AI:** Multimodal cricket scorecard intelligence pipeline (scorecard detection, innings and batting/bowling performance extraction, overs/balls/strike rate/economy rate normalization, domain integrity validation, player career statistics across scorecards, and deterministic factual match summary synthesis).
+- [ ] **Module 14 — Intelligent Query Router:** Query intent classification, adaptive routing, and retrieval pipeline dispatch. *(Planned)*
+- [ ] **Module 15 — AI Analytics & Visualization:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
 - [ ] **Module 16 — End-to-End Integration:** Unified orchestration connecting ingestion, storage, search, synthesis, and UI workflows. *(Planned)*
 - [ ] **Module 17 — Testing & AI Evaluation:** Automated evaluation suite, retrieval precision/recall benchmarks, and regression testing. *(Planned)*
 - [ ] **Module 18 — Deployment & Final Polish:** Production containerization, CI/CD pipelines, rate limiting, and observability telemetry. *(Planned)*
@@ -40,7 +40,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 
 ## Tech Stack
 
-### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 & 12)
+### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 & 13)
 - **Backend:** Python 3.13+, FastAPI, Uvicorn, Pydantic v2, Pydantic Settings, HTTPX, Pytest
 - **Authentication & Security:** PyJWT, bcrypt, OAuth2 Password Bearer flow
 - **Storage & File Management:** Chunked streaming file storage, UUID-isolated paths, extension & size validation
@@ -52,6 +52,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - **Conversational Chat:** Multi-turn conversation sessions, bounded message context window, citation sources, retrieval grounding signals
 - **Reminder Engine & Date Intelligence:** Context-aware date extraction regex engine, table cell mapping, warranty/expiry/renewal tracking, lead-time delta computation, due state transitions
 - **Notification Delivery Engine:** Multi-channel notification pipeline (In-App, Email/SMTP, HMAC-signed Webhooks), user preference routing, retry queue, unread counters
+- **Cricket Scorecard Intelligence:** Specialized scorecard layout detection, innings and batting/bowling statistics extraction, overs/balls/strike rate/economy rate normalization, domain integrity validation, multi-match career statistics aggregation, and deterministic factual match summary synthesis
 - **Database & Vectors:** PostgreSQL, SQLAlchemy 2.x, Alembic, psycopg 3 (binary), pgvector
 - **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React
 - **DevOps:** Docker, Docker Compose (pgvector/pgvector:pg17)
@@ -75,7 +76,8 @@ IntelliRAG/
 │   │   │   ├── 004_add_vector_indexes.py
 │   │   │   ├── 005_add_conversation_models.py
 │   │   │   ├── 006_add_reminder_models.py
-│   │   │   └── 007_add_notification_models.py
+│   │   │   ├── 007_add_notification_models.py
+│   │   │   └── 008_add_cricket_models.py
 │   │   ├── env.py
 │   │   └── script.py.mako
 │   ├── app/
@@ -84,6 +86,7 @@ IntelliRAG/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── auth.py
 │   │   │   │   ├── conversations.py
+│   │   │   │   ├── cricket.py
 │   │   │   │   ├── dashboard.py
 │   │   │   │   ├── documents.py
 │   │   │   │   ├── health.py
@@ -105,6 +108,7 @@ IntelliRAG/
 │   │   ├── models/
 │   │   │   ├── __init__.py
 │   │   │   ├── conversation.py
+│   │   │   ├── cricket.py
 │   │   │   ├── document.py
 │   │   │   ├── document_chunk.py
 │   │   │   ├── notification.py
@@ -115,6 +119,7 @@ IntelliRAG/
 │   │   │   ├── auth.py
 │   │   │   ├── chunk.py
 │   │   │   ├── conversation.py
+│   │   │   ├── cricket.py
 │   │   │   ├── dashboard.py
 │   │   │   ├── document.py
 │   │   │   ├── health.py
@@ -124,6 +129,14 @@ IntelliRAG/
 │   │   │   ├── reminder.py
 │   │   │   └── retrieval.py
 │   │   ├── services/
+│   │   │   ├── cricket/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── detector.py
+│   │   │   │   ├── extractor.py
+│   │   │   │   ├── normalizer.py
+│   │   │   │   ├── stats_service.py
+│   │   │   │   ├── summary_service.py
+│   │   │   │   └── validator.py
 │   │   │   ├── document_processing/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── base.py
@@ -143,6 +156,7 @@ IntelliRAG/
 │   │   │   ├── auth_service.py
 │   │   │   ├── chunking_service.py
 │   │   │   ├── conversation_service.py
+│   │   │   ├── cricket_service.py
 │   │   │   ├── dashboard_service.py
 │   │   │   ├── date_extractor.py
 │   │   │   ├── document_chunk_service.py
@@ -164,6 +178,7 @@ IntelliRAG/
 │   │   ├── test_auth.py
 │   │   ├── test_chunking_embeddings.py
 │   │   ├── test_conversations.py
+│   │   ├── test_cricket.py
 │   │   ├── test_dashboard.py
 │   │   ├── test_database.py
 │   │   ├── test_documents.py
@@ -186,6 +201,7 @@ IntelliRAG/
 │   │   │   ├── authStorage.ts
 │   │   │   ├── client.ts
 │   │   │   ├── conversations.ts
+│   │   │   ├── cricket.ts
 │   │   │   ├── dashboard.ts
 │   │   │   ├── documents.ts
 │   │   │   ├── health.ts
@@ -198,6 +214,7 @@ IntelliRAG/
 │   │   │   ├── AuthCard.tsx
 │   │   │   ├── AuthModal.tsx
 │   │   │   ├── ChatInterface.tsx
+│   │   │   ├── CricketScorecardView.tsx
 │   │   │   ├── DashboardOverview.tsx
 │   │   │   ├── DocumentChunksModal.tsx
 │   │   │   ├── DocumentInspectionModal.tsx
@@ -384,6 +401,14 @@ docker-compose up -d db
 - **`POST /api/notifications/process-pending`**: Retry failed/pending background notification deliveries (`Authorization: Bearer <token>` required).
 - **`GET /api/notification-preferences`**: Retrieve delivery channel settings, email address, webhook URL, and event filters (`Authorization: Bearer <token>` required).
 - **`PATCH /api/notification-preferences`**: Update delivery channel toggles, webhook destination & secret, and event category subscriptions (`Authorization: Bearer <token>` required).
+
+### Cricket Scorecard AI Endpoints
+- **`POST /api/cricket/documents/{document_id}/detect`**: Inspect processed document for cricket scorecard signals, confidence score, and detected teams (`Authorization: Bearer <token>` required).
+- **`POST /api/cricket/documents/{document_id}/extract`**: Extract and persist structured match innings, batting/bowling statistics, and validation status (`Authorization: Bearer <token>` required).
+- **`GET /api/cricket/documents/{document_id}`**: Retrieve extracted cricket match data for a document (`Authorization: Bearer <token>` required).
+- **`GET /api/cricket/documents/{document_id}/statistics`**: Compute top scorers, top wicket takers, highest strike rates, best economy rates, and team comparisons (`Authorization: Bearer <token>` required).
+- **`GET /api/cricket/documents/{document_id}/summary`**: Generate factual natural-language match summary synthesized directly from structured match data (`Authorization: Bearer <token>` required).
+- **`GET /api/cricket/players/{player_name}/statistics`**: Retrieve aggregated career batting and bowling performance metrics across all user scorecards (`Authorization: Bearer <token>` required).
 
 ### Interactive API Documentation
 - **Swagger UI:** `http://localhost:8000/api/docs`

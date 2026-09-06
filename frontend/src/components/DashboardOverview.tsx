@@ -23,7 +23,7 @@ import { DocumentInspectionModal } from './DocumentInspectionModal'
 import { DocumentChunksModal } from './DocumentChunksModal'
 
 interface DashboardOverviewProps {
-  onNavigateTab: (tab: 'dashboard' | 'documents' | 'chat' | 'reminders' | 'rag' | 'search' | 'roadmap') => void
+  onNavigateTab: (tab: 'dashboard' | 'documents' | 'chat' | 'reminders' | 'cricket' | 'rag' | 'search' | 'roadmap') => void
   refreshTrigger?: number
 }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Layout, Database, KeyRound, FolderGit2, ScanText, Layers, GitFork, Check } from 'lucide-react'
+import { Layout, Database, KeyRound, FolderGit2, ScanText, Layers, GitFork, Check, Trophy, Clock } from 'lucide-react'
 
 export const ArchitectureOverview: React.FC = () => {
   return (
@@ -178,6 +178,34 @@ export const ArchitectureOverview: React.FC = () => {
           </div>
           <h4 className="text-sm font-bold text-slate-100">Notification System</h4>
           <p className="text-xs text-slate-400 mt-1">Multi-channel alert delivery (In-App, Email, Webhooks), idempotent event dispatching, retry worker, and user preference management.</p>
+        </div>
+
+        <div className="border border-indigo-500/40 bg-indigo-950/20 rounded-xl p-4 relative overflow-hidden">
+          <div className="flex items-center justify-between mb-3">
+            <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-400">
+              <Trophy className="w-5 h-5" />
+            </div>
+            <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <Check className="w-3 h-3" />
+              <span>Module 13 Completed</span>
+            </span>
+          </div>
+          <h4 className="text-sm font-bold text-slate-100">Cricket Scorecard AI</h4>
+          <p className="text-xs text-slate-400 mt-1">Scorecard detection, innings &amp; performance extraction, validation rules, statistics aggregation, and match summaries.</p>
+        </div>
+
+        <div className="border border-slate-800 bg-slate-950/40 rounded-xl p-4 relative overflow-hidden opacity-75">
+          <div className="flex items-center justify-between mb-3">
+            <div className="p-2 rounded-lg bg-slate-800 text-slate-400">
+              <Clock className="w-5 h-5" />
+            </div>
+            <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700">
+              <Clock className="w-3 h-3" />
+              <span>Module 14 Planned</span>
+            </span>
+          </div>
+          <h4 className="text-sm font-bold text-slate-100">Analytics & Workflows</h4>
+          <p className="text-xs text-slate-400 mt-1">Deep analytics pipelines, automated recurring workflows, and cross-document intelligence dashboards.</p>
         </div>
       </div>
     </div>

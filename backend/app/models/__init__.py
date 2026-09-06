@@ -4,6 +4,12 @@ from app.models.document_chunk import DocumentChunk
 from app.models.conversation import Conversation, ConversationMessage
 from app.models.reminder import Reminder
 from app.models.notification import Notification, NotificationPreference
+from app.models.cricket import (
+    CricketMatch,
+    CricketInnings,
+    CricketBattingPerformance,
+    CricketBowlingPerformance,
+)
 
 __all__ = [
     "User",
@@ -14,4 +20,8 @@ __all__ = [
     "Reminder",
     "Notification",
     "NotificationPreference",
+    "CricketMatch",
+    "CricketInnings",
+    "CricketBattingPerformance",
+    "CricketBowlingPerformance",
 ]

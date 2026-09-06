@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from app.models.user import User
     from app.models.document_chunk import DocumentChunk
     from app.models.reminder import Reminder
+    from app.models.cricket import CricketMatch
 
 class Document(Base):
     __tablename__ = "documents"
@@ -97,4 +98,10 @@ class Document(Base):
     reminders: Mapped[List["Reminder"]] = relationship(
         "Reminder",
         back_populates="document"
+    )
+    cricket_match: Mapped[Optional["CricketMatch"]] = relationship(
+        "CricketMatch",
+        back_populates="document",
+        uselist=False,
+        cascade="all, delete-orphan"
     )

@@ -13,6 +13,12 @@ from app.models.document_chunk import DocumentChunk
 from app.models.conversation import Conversation, ConversationMessage
 from app.models.reminder import Reminder
 from app.models.notification import Notification, NotificationPreference
+from app.models.cricket import (
+    CricketMatch,
+    CricketInnings,
+    CricketBattingPerformance,
+    CricketBowlingPerformance,
+)
 
 def test_settings_database_configuration():
     assert settings.DATABASE_URL is not None
@@ -28,6 +34,10 @@ def test_models_metadata_registration():
     assert "document_chunks" in table_names
     assert "conversations" in table_names
     assert "conversation_messages" in table_names
+    assert "cricket_matches" in table_names
+    assert "cricket_innings" in table_names
+    assert "cricket_batting_performances" in table_names
+    assert "cricket_bowling_performances" in table_names
     assert "reminders" in table_names
     assert "notifications" in table_names
     assert "notification_preferences" in table_names
@@ -163,6 +173,64 @@ def test_conversation_message_model_instantiation():
     assert msg.citations == [{"citation_id": 1, "document_filename": "Q3.pdf"}]
     assert hasattr(msg, "conversation")
 
+def test_cricket_models_instantiation():
+    user_id = uuid.uuid4()
+    doc_id = uuid.uuid4()
+    match = CricketMatch(
+        document_id=doc_id,
+        user_id=user_id,
+        team_1="India",
+        team_2="Australia",
+        format="T20",
+        venue="MCG",
+        winner="India",
+        result_text="India won by 5 wickets"
+    )
+    assert match.team_1 == "India"
+    assert match.winner == "India"
+    assert hasattr(match, "innings")
+    assert hasattr(match, "user")
+    assert hasattr(match, "document")
+
+    innings = CricketInnings(
+        match_id=match.id,
+        innings_number=1,
+        team="Australia",
+        total_runs=185,
+        wickets=6,
+        overs=20.0,
+        extras_total=12
+    )
+    assert innings.total_runs == 185
+    assert innings.overs == 20.0
+    assert hasattr(innings, "batting_performances")
+    assert hasattr(innings, "bowling_performances")
+
+    bat = CricketBattingPerformance(
+        innings_id=innings.id,
+        player_name="David Warner",
+        runs=56,
+        balls=38,
+        fours=6,
+        sixes=2,
+        strike_rate=147.37,
+        dismissal="c Kohli b Bumrah"
+    )
+    assert bat.player_name == "David Warner"
+    assert bat.runs == 56
+
+    bowl = CricketBowlingPerformance(
+        innings_id=innings.id,
+        player_name="Jasprit Bumrah",
+        overs=4.0,
+        maidens=0,
+        runs_conceded=24,
+        wickets=3,
+        economy=6.0
+    )
+    assert bowl.player_name == "Jasprit Bumrah"
+    assert bowl.wickets == 3
+
 def test_get_db_generator():
     db_gen = get_db()
     db_session = next(db_gen)
@@ -179,6 +247,6 @@ def test_alembic_configuration():
     alembic_cfg.set_main_option("script_location", os.path.join(base_dir, "alembic"))
     script = ScriptDirectory.from_config(alembic_cfg)
     revisions = list(script.walk_revisions())
-    assert len(revisions) >= 7
+    assert len(revisions) >= 8
     head_rev = revisions[0]
-    assert head_rev.revision == "007_add_notification_models"
+    assert head_rev.revision == "008_add_cricket_models"

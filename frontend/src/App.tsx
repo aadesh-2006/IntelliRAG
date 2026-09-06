@@ -14,9 +14,10 @@ import { ChatInterface } from './components/ChatInterface'
 import { RemindersOverview } from './components/RemindersOverview'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { checkBackendHealth, HealthStatus } from './api/health'
-import { ShieldCheck, UserCheck, Lock, LayoutDashboard, Files, MessageSquare, Bot, Search, Layers, Bell } from 'lucide-react'
+import { CricketScorecardView } from './components/CricketScorecardView'
+import { ShieldCheck, UserCheck, Lock, LayoutDashboard, Files, MessageSquare, Bot, Search, Layers, Bell, Trophy } from 'lucide-react'
 
-type TabType = 'dashboard' | 'documents' | 'chat' | 'reminders' | 'rag' | 'search' | 'roadmap'
+type TabType = 'dashboard' | 'documents' | 'chat' | 'reminders' | 'cricket' | 'rag' | 'search' | 'roadmap'
 
 export const AppContent: React.FC = () => {
   const { user, isAuthenticated, isLoading } = useAuth()
@@ -167,6 +168,19 @@ export const AppContent: React.FC = () => {
 
               <button
                 type="button"
+                onClick={() => setActiveTab('cricket')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                  activeTab === 'cricket'
+                    ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/20'
+                    : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                }`}
+              >
+                <Trophy className="w-4 h-4" />
+                <span>Cricket AI</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setActiveTab('rag')}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
                   activeTab === 'rag'
@@ -228,6 +242,12 @@ export const AppContent: React.FC = () => {
             {activeTab === 'reminders' && (
               <div className="animate-fade-in">
                 <RemindersOverview refreshTrigger={refreshTrigger} />
+              </div>
+            )}
+
+            {activeTab === 'cricket' && (
+              <div className="animate-fade-in">
+                <CricketScorecardView refreshTrigger={refreshTrigger} />
               </div>
             )}
 
