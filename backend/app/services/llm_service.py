@@ -45,6 +45,37 @@ class MockLLMService(BaseLLMService):
         temperature: Optional[float] = None,
         max_tokens: Optional[int] = None
     ) -> str:
+        if "=== STRUCTURED ANALYTICS DATA ===" in user_prompt:
+            intent_match = re.search(r"Intent:\s*(.*)", user_prompt)
+            total_match = re.search(r"Total:\s*(.*)", user_prompt)
+            unit_match = re.search(r"Unit:\s*(.*)", user_prompt)
+            data_match = re.search(r"Data:\s*\n(.*?)\n=== END STRUCTURED ANALYTICS DATA ===", user_prompt, re.DOTALL)
+
+            intent = intent_match.group(1).strip() if intent_match else ""
+            total_str = total_match.group(1).strip() if total_match else "0"
+            unit_str = unit_match.group(1).strip() if unit_match else ""
+            data_str = data_match.group(1).strip() if data_match else ""
+
+            if intent == "DOCUMENT_COUNT":
+                return f"You have {total_str} document(s) in your workspace."
+            elif intent == "STORAGE_ANALYSIS":
+                return f"Total storage used is {total_str} bytes across your documents."
+            elif intent == "EXPIRATION_ANALYSIS":
+                return f"Found {total_str} upcoming/actionable expiration(s) in your workspace data: {data_str[:250]}."
+            elif intent == "CRICKET_BATTING_ANALYSIS":
+                return f"Cricket batting analysis: {data_str[:250]} (Total: {total_str} {unit_str})."
+            elif intent == "CRICKET_BOWLING_ANALYSIS":
+                return f"Cricket bowling analysis: {data_str[:250]} (Total: {total_str} {unit_str})."
+            elif intent == "DOCUMENT_STATUS_ANALYSIS":
+                return f"Document status breakdown shows {total_str} items: {data_str[:250]}."
+            elif intent == "DOCUMENT_BREAKDOWN":
+                return f"Document breakdown shows {total_str} items: {data_str[:250]}."
+            elif intent == "REMINDER_ANALYSIS":
+                return f"Reminder analysis shows {total_str} reminder(s): {data_str[:250]}."
+            elif intent == "CRICKET_MATCH_ANALYSIS":
+                return f"Cricket match analysis shows {total_str} matches: {data_str[:250]}."
+            return f"Structured analytics query returned {total_str} {unit_str}: {data_str[:250]}."
+
         if "=== RETRIEVED DOCUMENT CONTEXT ===" not in user_prompt:
             return "The provided documents do not contain sufficient information to answer this question."
 

@@ -12,6 +12,7 @@ from app.api.endpoints import (
     notification_preferences,
     cricket,
     query,
+    analytics,
 )
 
 api_router = APIRouter()
@@ -24,6 +25,7 @@ api_router.include_router(notifications.router, prefix="/notifications", tags=["
 api_router.include_router(notification_preferences.router, prefix="/notification-preferences", tags=["Notification Preferences"])
 api_router.include_router(cricket.router, tags=["Cricket Scorecard AI"])
 api_router.include_router(query.router, prefix="/query", tags=["Query Router"])
+api_router.include_router(analytics.router, prefix="/analytics", tags=["AI Analytics Engine"])
 api_router.include_router(documents.router, prefix="/documents", tags=["Documents"])
 api_router.include_router(retrieval.router, prefix="/retrieval", tags=["Retrieval"])
 api_router.include_router(rag.router, prefix="/rag", tags=["RAG"])

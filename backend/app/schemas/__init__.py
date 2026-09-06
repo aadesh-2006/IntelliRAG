@@ -62,6 +62,13 @@ from app.schemas.query_router import (
     QueryRouterRequest,
     QueryRouterResponse,
 )
+from app.schemas.analytics import (
+    AnalyticsIntent,
+    DateRangeFilter,
+    AnalyticsQueryRequest,
+    AnalyticsResult,
+    AnalyticsQueryResponse,
+)
 
 __all__ = [
     "HealthResponse",
@@ -126,4 +133,9 @@ __all__ = [
     "QueryClassification",
     "QueryRouterRequest",
     "QueryRouterResponse",
+    "AnalyticsIntent",
+    "DateRangeFilter",
+    "AnalyticsQueryRequest",
+    "AnalyticsResult",
+    "AnalyticsQueryResponse",
 ]

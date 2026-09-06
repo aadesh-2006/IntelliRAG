@@ -24,7 +24,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - [x] **Module 5 — Multimodal Document AI:** Safe PDF parsing with pdfplumber/pypdf, layout analysis (headings, paragraphs, bounding boxes), structured tabular extraction (rows, cells, headers), image OCR extraction (pytesseract/PIL), docx/structured text routing, document lifecycle processing states (`UPLOADED` -> `PROCESSING` -> `PROCESSED` / `FAILED`), and interactive document extraction inspection UI.
 - [x] **Module 6 — RAG Engine:** Structure-aware chunking preserving sections/headings/tables/bounding boxes, 768-dimensional vector embedding service, pgvector persistence, cosine similarity search, top_k ranking, similarity threshold filtering, prompt construction with untrusted-data boundary separation, grounded question answering with source citations, and replaceable LLM provider abstraction.
 - [x] **Module 7 — Intelligent Query Router:** Query intent classification, rule/heuristic parameter extraction, strict SQL injection prevention, safe parameterized database queries (document counts, file metadata, expiration/reminders, cricket statistics), semantic RAG retrieval routing, and hybrid structured-plus-vector synthesis pipeline.
-- [ ] **Module 8 — AI Analytics Engine:** Structured data aggregation, document insights, analytics queries, and trend extraction. *(Planned)*
+- [x] **Module 8 — AI Analytics Engine:** Natural language analytics query understanding, strongly typed analytics intent model (`DOCUMENT_COUNT`, `DOCUMENT_BREAKDOWN`, `DOCUMENT_STATUS_ANALYSIS`, `DOCUMENT_DATE_RANGE`, `STORAGE_ANALYSIS`, `EXPIRATION_ANALYSIS`, `REMINDER_ANALYSIS`, `CRICKET_BATTING_ANALYSIS`, `CRICKET_BOWLING_ANALYSIS`, `CRICKET_MATCH_ANALYSIS`), natural date range parser (today, this week, this month, this year, next 60 days, overdue), safe parameterized SQLAlchemy aggregations (COUNT, SUM, AVG, MIN, MAX, GROUP BY, ORDER BY, LIMIT), strict multi-tenant user isolation, and Gemini/LLM explanation of authoritative database facts.
 - [x] **Module 9 — User Dashboard:** Interactive operational dashboard overview, summary KPIs (total documents, ready, processing/embedding, failed, total chunks, storage footprint), document lifecycle monitoring, type distributions, recent document ingestions, and direct modal inspection workflows.
 - [x] **Module 10 — Chat Interface:** Persistent multi-turn conversations, bounded conversational context management, user-isolated chat message history, source citation tracking, intelligent query router integration with route badges (`SQL`, `RAG`, `HYBRID`), and retrieval grounding signal visualizations.
 - [x] **Module 11 — Reminder Engine:** Production-grade reminder engine, context-aware actionable date extraction (warranties, expiries, renewals, payment due dates, deadlines), lead-time alert calculations, document date scanner, and complete CRUD reminder tracking workspace.
@@ -38,8 +38,8 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 
 ## Tech Stack
 
-### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12 & 13)
-- **Intelligent Query Router:** Query intent classifier (metadata, expiration, reminders, cricket, document Q&A, hybrid analysis), parameter extraction heuristics, safe parameterized SQLAlchemy queries (zero raw SQL), RAG retrieval routing, hybrid structured + vector answer synthesizer
+### Implemented (Modules 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 & 13)
+- **Intelligent Query Router & Analytics Engine:** Query intent classification heuristics, natural date parser (UTC normalized), safe parameterized SQLAlchemy ORM aggregations (zero arbitrary raw SQL), strict user isolation, Gemini/LLM explanation of authoritative database facts, RAG retrieval routing, and hybrid structured + vector answer synthesizer
 - **Backend:** Python 3.13+, FastAPI, Uvicorn, Pydantic v2, Pydantic Settings, HTTPX, Pytest
 - **Authentication & Security:** PyJWT, bcrypt, OAuth2 Password Bearer flow
 - **Storage & File Management:** Chunked streaming file storage, UUID-isolated paths, extension & size validation
@@ -89,6 +89,7 @@ IntelliRAG/
 │   │   │   │   ├── dashboard.py
 │   │   │   │   ├── documents.py
 │   │   │   │   ├── health.py
+│   │   │   │   ├── analytics.py
 │   │   │   │   ├── notification_preferences.py
 │   │   │   │   ├── notifications.py
 │   │   │   │   ├── query.py
@@ -123,6 +124,7 @@ IntelliRAG/
 │   │   │   ├── dashboard.py
 │   │   │   ├── document.py
 │   │   │   ├── health.py
+│   │   │   ├── analytics.py
 │   │   │   ├── notification.py
 │   │   │   ├── processing.py
 │   │   │   ├── query_router.py
@@ -147,6 +149,12 @@ IntelliRAG/
 │   │   │   │   ├── pdf_processor.py
 │   │   │   │   ├── pipeline.py
 │   │   │   │   └── text_processor.py
+│   │   │   ├── analytics/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── classifier.py
+│   │   │   │   ├── date_parser.py
+│   │   │   │   ├── executor.py
+│   │   │   │   └── explanation_service.py
 │   │   │   ├── notifications/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── base.py
@@ -159,6 +167,7 @@ IntelliRAG/
 │   │   │   │   ├── hybrid_service.py
 │   │   │   │   └── structured_service.py
 │   │   │   ├── __init__.py
+│   │   │   ├── analytics_service.py
 │   │   │   ├── auth_service.py
 │   │   │   ├── chunking_service.py
 │   │   │   ├── conversation_service.py
@@ -182,6 +191,7 @@ IntelliRAG/
 │   ├── tests/
 │   │   ├── __init__.py
 │   │   ├── conftest.py
+│   │   ├── test_analytics.py
 │   │   ├── test_auth.py
 │   │   ├── test_chunking_embeddings.py
 │   │   ├── test_conversations.py
@@ -206,6 +216,7 @@ IntelliRAG/
 │   ├── src/
 │   │   ├── api/
 │   │   │   ├── auth.ts
+│   │   │   ├── analytics.ts
 │   │   │   ├── authStorage.ts
 │   │   │   ├── client.ts
 │   │   │   ├── conversations.ts
@@ -389,6 +400,9 @@ docker-compose up -d db
 
 ### Semantic Search & Retrieval Endpoints
 - **`POST /api/retrieval/search`**: Query vector store for semantically similar chunks with pgvector cosine distance, top_k ranking, similarity threshold filtering, and document/document-type scoping (`Authorization: Bearer <token>` required).
+
+### AI Analytics Engine Endpoints
+- **`POST /api/analytics/query`**: Submit natural language analytical queries to extract structured metrics, date-range distributions, storage footprints, upcoming expirations/warranties, reminder breakdowns, and cricket career/match statistics with safe parameterized SQLAlchemy aggregations and Gemini/LLM explanation (`Authorization: Bearer <token>` required).
 
 ### Intelligent Query Router Endpoints
 - **`POST /api/query`**: Intelligently classify query intent and dynamically route execution to `SQL`, `RAG`, or `HYBRID` paths with parameter extraction, safe structured execution, and grounded answer synthesis (`Authorization: Bearer <token>` required).

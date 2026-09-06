@@ -23,6 +23,7 @@ from app.services.reminder_service import ReminderService, reminder_service
 from app.services.notification_service import NotificationService, notification_service
 from app.services.cricket_service import CricketService, cricket_service
 from app.services.query_router_service import QueryRouterService, query_router_service
+from app.services.analytics_service import AnalyticsService, analytics_service
 
 __all__ = [
     "get_user_by_email",
@@ -70,4 +71,6 @@ __all__ = [
     "cricket_service",
     "QueryRouterService",
     "query_router_service",
+    "AnalyticsService",
+    "analytics_service",
 ]

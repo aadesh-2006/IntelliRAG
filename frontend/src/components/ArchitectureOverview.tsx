@@ -1,5 +1,5 @@
 import React from 'react'
-import { Layout, Database, KeyRound, FolderGit2, ScanText, Layers, GitFork, Check, Trophy, Clock, Network } from 'lucide-react'
+import { Layout, Database, KeyRound, FolderGit2, ScanText, Layers, GitFork, Check, Trophy, Clock, BarChart3 } from 'lucide-react'
 
 export const ArchitectureOverview: React.FC = () => {
   return (
@@ -106,22 +106,22 @@ export const ArchitectureOverview: React.FC = () => {
               <span>Module 7 Completed</span>
             </span>
           </div>
-          <h4 className="text-sm font-bold text-slate-100">Retrieval & Semantic Search</h4>
-          <p className="text-xs text-slate-400 mt-1">pgvector cosine distance queries, similarity threshold filters, top_k ranking, and document scoping.</p>
+          <h4 className="text-sm font-bold text-slate-100">Intelligent Query Router</h4>
+          <p className="text-xs text-slate-400 mt-1">Intent routing across SQL (structured parameterized data), RAG (grounded semantic retrieval), and HYBRID execution paths.</p>
         </div>
 
         <div className="border border-indigo-500/40 bg-indigo-950/20 rounded-xl p-4 relative overflow-hidden">
           <div className="flex items-center justify-between mb-3">
             <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-400">
-              <Check className="w-5 h-5" />
+              <BarChart3 className="w-5 h-5" />
             </div>
             <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
               <Check className="w-3 h-3" />
               <span>Module 8 Completed</span>
             </span>
           </div>
-          <h4 className="text-sm font-bold text-slate-100">RAG Answer Generation</h4>
-          <p className="text-xs text-slate-400 mt-1">Grounded prompt construction, replaceable LLM abstraction, verified source citations, and zero-context safety.</p>
+          <h4 className="text-sm font-bold text-slate-100">AI Analytics Engine</h4>
+          <p className="text-xs text-slate-400 mt-1">Natural-language analytics understanding, safe parameterized aggregations, date intelligence, and LLM explanation.</p>
         </div>
 
         <div className="border border-indigo-500/40 bg-indigo-950/20 rounded-xl p-4 relative overflow-hidden">
@@ -194,20 +194,6 @@ export const ArchitectureOverview: React.FC = () => {
           <p className="text-xs text-slate-400 mt-1">Scorecard detection, innings &amp; performance extraction, validation rules, statistics aggregation, and match summaries.</p>
         </div>
 
-        <div className="border border-indigo-500/40 bg-indigo-950/20 rounded-xl p-4 relative overflow-hidden">
-          <div className="flex items-center justify-between mb-3">
-            <div className="p-2 rounded-lg bg-indigo-500/20 text-indigo-400">
-              <Network className="w-5 h-5" />
-            </div>
-            <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <Check className="w-3 h-3" />
-              <span>Module 7 Completed</span>
-            </span>
-          </div>
-          <h4 className="text-sm font-bold text-slate-100">Intelligent Query Router</h4>
-          <p className="text-xs text-slate-400 mt-1">Intent routing across SQL (structured parameterized data), RAG (grounded semantic retrieval), and HYBRID execution paths.</p>
-        </div>
-
         <div className="border border-slate-800 bg-slate-950/40 rounded-xl p-4 relative overflow-hidden opacity-75">
           <div className="flex items-center justify-between mb-3">
             <div className="p-2 rounded-lg bg-slate-800 text-slate-400">
@@ -215,11 +201,11 @@ export const ArchitectureOverview: React.FC = () => {
             </div>
             <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700">
               <Clock className="w-3 h-3" />
-              <span>Module 8 Planned</span>
+              <span>Module 14 Planned</span>
             </span>
           </div>
-          <h4 className="text-sm font-bold text-slate-100">AI Analytics Engine</h4>
-          <p className="text-xs text-slate-400 mt-1">Structured data aggregation, multi-document cross-sectional insights, trend forecasting, and analytical visualizations.</p>
+          <h4 className="text-sm font-bold text-slate-100">End-to-End Integration</h4>
+          <p className="text-xs text-slate-400 mt-1">Unified orchestration connecting ingestion, storage, search, synthesis, and full UI workflows.</p>
         </div>
       </div>
     </div>
