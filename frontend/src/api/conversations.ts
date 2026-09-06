@@ -2,6 +2,10 @@ import { fetchApi } from './client'
 import { Citation } from './rag'
 
 export interface GroundingMetadata {
+  route?: string
+  intent?: string
+  confidence?: number
+  structured_data?: Record<string, any>
   retrieved_sources: number
   highest_similarity: number
   average_similarity: number
@@ -10,6 +14,7 @@ export interface GroundingMetadata {
     provider: string
     model: string
   }
+  execution_time_ms?: number
 }
 
 export interface ConversationMessage {

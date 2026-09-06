@@ -22,6 +22,7 @@ from app.services.date_extractor import ActionableDateExtractor, date_extractor
 from app.services.reminder_service import ReminderService, reminder_service
 from app.services.notification_service import NotificationService, notification_service
 from app.services.cricket_service import CricketService, cricket_service
+from app.services.query_router_service import QueryRouterService, query_router_service
 
 __all__ = [
     "get_user_by_email",
@@ -67,4 +68,6 @@ __all__ = [
     "notification_service",
     "CricketService",
     "cricket_service",
+    "QueryRouterService",
+    "query_router_service",
 ]

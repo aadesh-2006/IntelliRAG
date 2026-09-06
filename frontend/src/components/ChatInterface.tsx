@@ -510,7 +510,22 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ refreshTrigger = 0
                     }`}
                   >
                     <div className="flex items-center justify-between gap-4 border-b pb-2 text-[10px] font-semibold uppercase tracking-wider opacity-70 border-white/10">
-                      <span>{isUser ? 'You' : 'IntelliRAG Assistant'}</span>
+                      <div className="flex items-center space-x-1.5">
+                        <span>{isUser ? 'You' : 'IntelliRAG Assistant'}</span>
+                        {!isUser && msg.grounding_metadata?.route && (
+                          <span
+                            className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold tracking-normal ${
+                              msg.grounding_metadata.route === 'SQL'
+                                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                                : msg.grounding_metadata.route === 'HYBRID'
+                                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                                : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30'
+                            }`}
+                          >
+                            {msg.grounding_metadata.route}
+                          </span>
+                        )}
+                      </div>
                       <div className="flex items-center space-x-2">
                         <span>{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                         {!isUser && (

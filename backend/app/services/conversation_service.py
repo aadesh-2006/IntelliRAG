@@ -13,11 +13,18 @@ from app.schemas.conversation import (
     SendMessageResponse,
 )
 from app.schemas.rag import RAGQueryRequest, Citation
+from app.schemas.query_router import QueryRouterRequest, QueryRouterResponse, RouteType
 from app.services.rag_service import RAGService, rag_service
+from app.services.query_router_service import QueryRouterService, query_router_service
 
 class ConversationService:
-    def __init__(self, rag: Optional[RAGService] = None):
+    def __init__(
+        self,
+        rag: Optional[RAGService] = None,
+        router: Optional[QueryRouterService] = None
+    ):
         self.rag_service = rag or rag_service
+        self.query_router_service = router or query_router_service
 
     def create_conversation(
         self,
@@ -185,18 +192,18 @@ class ConversationService:
             for m in past_db_msgs
         ]
 
-        rag_req = RAGQueryRequest(
+        router_req = QueryRouterRequest(
             query=cleaned_content,
             top_k=request.top_k,
-            similarity_threshold=request.similarity_threshold,
+            similarity_threshold=request.similarity_threshold or 0.0,
             document_ids=request.document_ids,
             document_type=request.document_type
         )
 
-        rag_res = self.rag_service.answer_query(
+        router_res = self.query_router_service.route_and_execute(
             db=db,
             user=user,
-            request=rag_req,
+            request=router_req,
             history=history_context
         )
 
@@ -211,25 +218,34 @@ class ConversationService:
 
         citations_data = [
             c.model_dump(mode="json")
-            for c in rag_res.citations
-        ] if rag_res.citations else None
+            for c in (router_res.citations or [])
+        ] if router_res.citations else None
+
+        citations_list = router_res.citations or []
+        route_str = router_res.route.value if hasattr(router_res.route, 'value') else str(router_res.route)
+        intent_str = router_res.intent.value if hasattr(router_res.intent, 'value') else str(router_res.intent)
 
         grounding_metadata = {
-            "retrieved_sources": len(rag_res.citations),
-            "highest_similarity": max((c.similarity_score for c in rag_res.citations), default=0.0),
-            "average_similarity": round(sum(c.similarity_score for c in rag_res.citations) / len(rag_res.citations), 4) if rag_res.citations else 0.0,
-            "has_sufficient_context": rag_res.has_sufficient_context,
-            "model_info": rag_res.model_info,
+            "route": route_str,
+            "intent": intent_str,
+            "confidence": router_res.confidence,
+            "structured_data": router_res.structured_data,
+            "retrieved_sources": len(citations_list),
+            "highest_similarity": max((c.similarity_score for c in citations_list), default=0.0),
+            "average_similarity": round(sum(c.similarity_score for c in citations_list) / len(citations_list), 4) if citations_list else 0.0,
+            "has_sufficient_context": router_res.has_sufficient_context,
+            "model_info": router_res.model_info,
+            "execution_time_ms": router_res.execution_time_ms,
         }
 
         assistant_msg = ConversationMessage(
             id=uuid.uuid4(),
             conversation_id=conv.id,
             role="assistant",
-            content=rag_res.answer,
+            content=router_res.answer,
             citations=citations_data,
             grounding_metadata=grounding_metadata,
-            is_sufficient_context=rag_res.has_sufficient_context
+            is_sufficient_context=router_res.has_sufficient_context
         )
         db.add(assistant_msg)
 
@@ -257,9 +273,9 @@ class ConversationService:
                 conversation_id=assistant_msg.conversation_id,
                 role=assistant_msg.role,
                 content=assistant_msg.content,
-                citations=rag_res.citations,
+                citations=router_res.citations,
                 grounding_metadata=grounding_metadata,
-                is_sufficient_context=rag_res.has_sufficient_context,
+                is_sufficient_context=router_res.has_sufficient_context,
                 created_at=assistant_msg.created_at
             )
         )

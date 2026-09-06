@@ -55,6 +55,13 @@ from app.schemas.cricket import (
     CricketMatchStatsResponse,
     CricketPlayerStatsResponse,
 )
+from app.schemas.query_router import (
+    RouteType,
+    QueryIntent,
+    QueryClassification,
+    QueryRouterRequest,
+    QueryRouterResponse,
+)
 
 __all__ = [
     "HealthResponse",
@@ -114,4 +121,9 @@ __all__ = [
     "CricketTopPerformer",
     "CricketMatchStatsResponse",
     "CricketPlayerStatsResponse",
+    "RouteType",
+    "QueryIntent",
+    "QueryClassification",
+    "QueryRouterRequest",
+    "QueryRouterResponse",
 ]
