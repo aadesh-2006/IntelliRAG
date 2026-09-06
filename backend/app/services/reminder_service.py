@@ -553,4 +553,66 @@ class ReminderService:
             evaluated_at=now
         )
 
+    def process_all_due_reminders(
+        self,
+        db: Session
+    ) -> ProcessDueRemindersResponse:
+        now = datetime.now(timezone.utc)
+        stmt = select(Reminder).where(
+            Reminder.status == "PENDING",
+            Reminder.remind_at <= now
+        )
+        due_rems = list(db.execute(stmt).scalars().all())
+
+        for rem in due_rems:
+            rem.status = "DUE"
+            rem.updated_at = func.now()
+
+            try:
+                rem_dt_str = rem.remind_at.isoformat() if rem.remind_at else ""
+                notification_service.create_notification(
+                    db=db,
+                    user_id=rem.user_id,
+                    notification_type="REMINDER_DUE",
+                    title=f"Reminder Due: {rem.title}",
+                    message=f"Reminder is due for action: {rem.title}",
+                    severity="WARNING",
+                    related_reminder_id=rem.id,
+                    related_document_id=rem.document_id,
+                    event_key=f"reminder_due_{rem.id}_{rem_dt_str}"
+                )
+            except Exception:
+                pass
+
+        overdue_stmt = select(Reminder).where(
+            Reminder.status.in_(["PENDING", "DUE"]),
+            Reminder.due_at < now
+        )
+        overdue_rems = list(db.execute(overdue_stmt).scalars().all())
+        for o_rem in overdue_rems:
+            try:
+                o_dt_str = o_rem.due_at.isoformat() if o_rem.due_at else ""
+                notification_service.create_notification(
+                    db=db,
+                    user_id=o_rem.user_id,
+                    notification_type="REMINDER_OVERDUE",
+                    title=f"Reminder Overdue: {o_rem.title}",
+                    message=f"Reminder deadline has passed: {o_rem.title}",
+                    severity="CRITICAL",
+                    related_reminder_id=o_rem.id,
+                    related_document_id=o_rem.document_id,
+                    event_key=f"reminder_overdue_{o_rem.id}_{o_dt_str}"
+                )
+            except Exception:
+                pass
+
+        if due_rems or overdue_rems:
+            db.commit()
+
+        return ProcessDueRemindersResponse(
+            processed_count=len(due_rems),
+            transitioned_due_count=len(due_rems),
+            evaluated_at=now
+        )
+
 reminder_service = ReminderService()

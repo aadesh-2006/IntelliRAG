@@ -1,7 +1,17 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.router import api_router
 from app.config import settings
+from app.core.scheduler import app_scheduler
+
+@asynccontextmanager
+async def lifespan(application: FastAPI):
+    if settings.SCHEDULER_ENABLED:
+        app_scheduler.start()
+    yield
+    if app_scheduler.is_running:
+        app_scheduler.shutdown(wait=False)
 
 def create_application() -> FastAPI:
     application = FastAPI(
@@ -10,6 +20,7 @@ def create_application() -> FastAPI:
         openapi_url=f"{settings.API_V1_PREFIX}/openapi.json",
         docs_url=f"{settings.API_V1_PREFIX}/docs",
         redoc_url=f"{settings.API_V1_PREFIX}/redoc",
+        lifespan=lifespan,
     )
 
     application.add_middleware(

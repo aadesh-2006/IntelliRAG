@@ -48,6 +48,10 @@ class Settings(BaseSettings):
     WEBHOOK_TIMEOUT_SECONDS: int = 5
     NOTIFICATION_MAX_RETRIES: int = 3
 
+    SCHEDULER_ENABLED: bool = True
+    REMINDER_CHECK_INTERVAL_SECONDS: int = 60
+    NOTIFICATION_RETRY_INTERVAL_SECONDS: int = 300
+
     @field_validator("CORS_ORIGINS", "ALLOWED_EXTENSIONS", mode="before")
     def assemble_list_fields(cls, v: Union[str, List[str]]) -> List[str]:
         if isinstance(v, str):

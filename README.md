@@ -27,7 +27,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - [x] **Module 8 — AI Analytics Engine:** Natural language analytics query understanding, strongly typed analytics intent model (`DOCUMENT_COUNT`, `DOCUMENT_BREAKDOWN`, `DOCUMENT_STATUS_ANALYSIS`, `DOCUMENT_DATE_RANGE`, `STORAGE_ANALYSIS`, `EXPIRATION_ANALYSIS`, `REMINDER_ANALYSIS`, `CRICKET_BATTING_ANALYSIS`, `CRICKET_BOWLING_ANALYSIS`, `CRICKET_MATCH_ANALYSIS`), natural date range parser (today, this week, this month, this year, next 60 days, overdue), safe parameterized SQLAlchemy aggregations (COUNT, SUM, AVG, MIN, MAX, GROUP BY, ORDER BY, LIMIT), strict multi-tenant user isolation, and Gemini/LLM explanation of authoritative database facts.
 - [x] **Module 9 — User Dashboard:** Interactive operational dashboard overview, summary KPIs (total documents, ready, processing/embedding, failed, total chunks, storage footprint), document lifecycle monitoring, type distributions, recent document ingestions, and direct modal inspection workflows.
 - [x] **Module 10 — Chat Interface:** Persistent multi-turn conversations, bounded conversational context management, user-isolated chat message history, source citation tracking, intelligent query router integration with route badges (`SQL`, `RAG`, `HYBRID`), and retrieval grounding signal visualizations.
-- [x] **Module 11 — Reminder Engine:** Production-grade reminder engine, context-aware actionable date extraction (warranties, expiries, renewals, payment due dates, deadlines), lead-time alert calculations, document date scanner, and complete CRUD reminder tracking workspace.
+- [x] **Module 11 — Reminder Engine:** Production-grade reminder engine with APScheduler autonomous background scheduling, context-aware actionable date extraction (warranties, expiries, renewals, payment due dates, deadlines), lead-time alert calculations, document date scanner, automated due reminder processing, and complete CRUD reminder tracking workspace.
 - [x] **Module 12 — Notification System:** Multi-channel alerting (In-App notifications, Email SMTP transport, Webhook dispatching with HMAC-SHA256 signatures), idempotent event key deduplication, notification retry worker, and user preference management.
 - [x] **Module 13 — Cricket Scorecard AI:** Multimodal cricket scorecard intelligence pipeline (scorecard detection, innings and batting/bowling performance extraction, overs/balls/strike rate/economy rate normalization, domain integrity validation, player career statistics across scorecards, and deterministic factual match summary synthesis).
 - [x] **Module 14 — End-to-End Integration:** Complete cross-module integration test suite and lifecycle validation covering document upload, processing, structure-aware chunking, vector embedding, semantic retrieval, RAG answer generation, query routing (SQL/RAG/HYBRID), chat orchestration, actionable date extraction, reminder scheduling, multi-channel notifications (deduplication & retry), cricket scorecard analytics, and multi-tenant security isolation.
@@ -49,7 +49,7 @@ Modern enterprise workflows deal with rich, visually complex documents where sta
 - **RAG & Answer Synthesis:** Grounded prompt builder, citation mapping, replaceable LLM abstraction (Google Gemini API / Mock), zero-context hallucination guardrails
 - **Dashboard & Operations:** Real-time multi-tenant KPI aggregations, lifecycle state breakdowns, document classification distribution metrics
 - **Conversational Chat:** Multi-turn conversation sessions, bounded message context window, citation sources, retrieval grounding signals
-- **Reminder Engine & Date Intelligence:** Context-aware date extraction regex engine, table cell mapping, warranty/expiry/renewal tracking, lead-time delta computation, due state transitions
+- **Reminder Engine & Autonomous Scheduling:** APScheduler background execution engine, periodic due-reminder evaluator, context-aware date extraction regex engine, table cell mapping, warranty/expiry/renewal tracking, lead-time delta computation, and automatic notification dispatching
 - **Notification Delivery Engine:** Multi-channel notification pipeline (In-App, Email/SMTP, HMAC-signed Webhooks), user preference routing, retry queue, unread counters
 - **AI Evaluation & Quality Framework:** Dedicated evaluation framework with deterministic test fixtures, ground-truth extraction annotations, golden RAG QA pairs, exact/normalized field accuracy evaluation, ranking metrics (Recall@K, Precision@K, MRR@K, NDCG@K), groundedness and faithfulness verification, citation validity/source-match scoring, and CLI/JSON/Markdown report generation
 - **End-to-End Integration & Security Isolation:** Comprehensive cross-module integration test suite (27 scenarios) validating full document lifecycles (`UPLOADED` -> `PROCESSING` -> `PROCESSED` -> `READY`), error handling/idempotency, prompt injection & SQL injection rejection, notification deduplication & retry, cricket analytics pipelines, and multi-tenant user isolation across all entities
@@ -103,6 +103,7 @@ IntelliRAG/
 │   │   │   └── router.py
 │   │   ├── core/
 │   │   │   ├── __init__.py
+│   │   │   ├── scheduler.py
 │   │   │   └── security.py
 │   │   ├── db/
 │   │   │   ├── __init__.py
@@ -203,6 +204,7 @@ IntelliRAG/
 │   │   ├── test_documents.py
 │   │   ├── test_e2e_integration.py
 │   │   ├── test_evaluation_framework.py
+│   │   ├── test_scheduler.py
 │   │   ├── test_health.py
 │   │   ├── test_notifications.py
 │   │   ├── test_processing.py
